@@ -1,7 +1,9 @@
 import 'package:get/route_manager.dart';
+import 'package:getx_architecture/App/modules/AddTraining/binding.dart';
 import 'package:getx_architecture/App/modules/traineeHome/traineeHomeScreen.dart';
 import 'package:getx_architecture/routes/routes.dart';
 
+import '../App/modules/AddTraining/page.dart';
 import '../App/modules/advisorHome/advisorHomeScreen.dart';
 import '../App/modules/login/binding.dart';
 import '../App/modules/login/page.dart';
@@ -25,6 +27,7 @@ abstract class AppPages {
         name: Routes.MANEGER_HOME,
         page: () => const ManegerHomesScreen(),
         binding: ManegerHomeBinding()),
-    GetPage(name: Routes.TRAINEE_HOME, page: () => const TraineeHomeScreen())
+    GetPage(name: Routes.TRAINEE_HOME, page: () => const TraineeHomeScreen()),
+    GetPage(name: Routes.ADD_TRAINING, page: ()=>const AddTrainingScreen(),binding: AddTrainingScreenBinding())
   ];
 }

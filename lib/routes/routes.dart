@@ -5,5 +5,6 @@ abstract class Routes{
   static const MANEGER_HOME="/manegerHome";
   static const TRAINEE_HOME="/traineeHome";
   static const ADVISOR_HOME="/advisorHome";
+  static const ADD_TRAINING="/addTraining";
 
 }

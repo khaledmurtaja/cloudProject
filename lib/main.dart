@@ -18,7 +18,14 @@ void main() async {
 }
 
 initServices() {
-  Get.lazyPut<CollectionReference>(() => FirebaseFirestore.instance.collection(FireBaseConsts.collectionName));
+  Get.lazyPut<CollectionReference>(
+      () =>
+          FirebaseFirestore.instance.collection(FireBaseConsts.userCollection),
+      tag: "users");
+  Get.lazyPut<CollectionReference>(
+      () => FirebaseFirestore.instance
+          .collection(FireBaseConsts.trainingCollection),
+      tag: "trainings");
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +37,6 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return GetMaterialApp(
           initialRoute: "/login",
-          // textDirection: TextDirection.rtl,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,

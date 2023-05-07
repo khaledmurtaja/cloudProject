@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:getx_architecture/App/modules/manegerHome/controller.dart';
 import 'package:getx_architecture/core/values/email_service_consts.dart';
 
+import '../../../routes/routes.dart';
+
 class ManegerHomesScreen extends GetView<ManegerHomeController> {
   const ManegerHomesScreen({Key? key}) : super(key: key);
 
@@ -13,6 +15,14 @@ class ManegerHomesScreen extends GetView<ManegerHomeController> {
       appBar: AppBar(
         title: const Text("maneger"),
         centerTitle: false,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.toNamed(
+            Routes.ADD_TRAINING,
+          );
+        },
+        child: const Icon(Icons.add),
       ),
       body: GetBuilder<ManegerHomeController>(builder: (controller) {
         if (controller.snapshot == null) {

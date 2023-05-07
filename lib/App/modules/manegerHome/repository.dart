@@ -8,7 +8,7 @@ import '../../../core/errors/exceptions.dart';
 import '../../../core/values/email_service_consts.dart';
 
 class ManegerHomeRepository {
-  final collection = Get.find<CollectionReference>();
+  final collection = Get.find<CollectionReference>(tag: "users");
   Future<void> updateIdField(
       {required String uid, required String newId}) async {
     try {

@@ -6,7 +6,7 @@ void showSnackBar(
     {required String message,
     String title = "error occurred",
     Color backGroundColor = Colors.red,
-    SnackPosition snackPosition = SnackPosition.BOTTOM}) {
+    SnackPosition snackPosition = SnackPosition.TOP}) {
   Get.snackbar(
     title,
     message,
