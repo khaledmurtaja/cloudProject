@@ -16,6 +16,7 @@ void showSnackBar(
     duration: const Duration(seconds: 5),
   );
 }
+
 Future<bool> isConnectedToNetwork() async {
   bool isConnected = false;
   final connectivityResult = await (Connectivity().checkConnectivity());
@@ -33,4 +34,22 @@ Future<bool> isConnectedToNetwork() async {
     isConnected = true;
   }
   return isConnected;
+}
+
+double getMediaQueryHeight(
+    {required BuildContext context, required num value}) {
+  var size = MediaQuery.of(context).size;
+  //figma height
+  double xdHeight = 813;
+  double percentage = value / xdHeight;
+  return size.height * percentage;
+}
+
+double getMediaQueryWidth({required BuildContext context, required num value}) {
+  var size = MediaQuery.of(context).size;
+  //figma height
+  double xdWidth = 375;
+  double percentage = value / xdWidth;
+
+  return size.width * percentage;
 }

@@ -34,13 +34,15 @@ class RegisterRepository {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     users
         .add(SystemUser(
-                fullName: controller.nameController.text,
+                name: controller.nameController.text,
                 role: controller.selectedRoleValue,
                 email: controller.emailController.text,
-                urlForSupportDocument: url,
                 field: controller.selectedProfessionValue,
                 id: "",
-                uid: controller.userCredential!.user!.uid)
+                uid: controller.userCredential!.user!.uid,
+                balance: '',
+                selectedTrainingIds: [],
+                userImgUrl: '')
             .toJson())
         .then((value) {
       print("user stored");
