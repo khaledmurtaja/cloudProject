@@ -1,3 +1,4 @@
 class FireBaseConsts{
-  static const String collectionName="users";
+  static const String userCollection="users";
+  static const String trainingCollection="trainings";
 }

@@ -3,24 +3,53 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/App/modules/register/repository.dart';
+import 'package:getx_architecture/core/errors/exceptions.dart';
+
+import '../../../core/utils/helperFunctions.dart';
 
 class RegisterController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController chosenFileController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  bool securePassword = true;
   String supportDocUrl = "";
   FilePickerResult? filePickerResult;
-  String selectedProfessionValue = "mobile development";
-  String selectedRoleValue = "trainee";
+  String selectedProfessionValue = "";
+  String selectedRoleValue = "";
   bool isLoading = false;
+  String fileName = "choose file";
   UserCredential? userCredential;
+  bool isRegisterButtonPressed=false;
+  List<String> role = ["Trainee", "Advisor"];
+  List<String> professions = [
+    "DataBase",
+    "Design",
+    "FrontEnd",
+    "BackEnd",
+    "Mobile",
+    "DevOps",
+    "Security"
+  ];
+  onRedEyeClicked() {
+    /// for controlling password visibility icon
+    securePassword = !securePassword;
+    update();
+  }
+  updateRegisterButtonStatues(){
+    isRegisterButtonPressed=true;
+    update();
+  }
 
   pickFile() async {
     try {
       filePickerResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'pdf', 'doc', 'png'],
+        allowedExtensions: ['jpg','png'],
       );
+      fileName = filePickerResult!.files.first.name;
+      update();
       return filePickerResult;
     } catch (error) {
       //handle error;
@@ -30,21 +59,30 @@ class RegisterController extends GetxController {
 
   changeProfessionFiled({required String value}) {
     selectedProfessionValue = value;
-    update();
   }
 
   changeRoleFiled({required String role}) {
     selectedRoleValue = role;
-    update();
   }
 
   registerUser({required String email, required String password}) async {
-    isLoading = true;
-    update();
-    final repo = Get.find<RegisterRepository>();
-    await repo.registerUser(email: email, password: password);
-    isLoading = false;
-    update();
-    print("success");
+    try {
+      isLoading = true;
+      update();
+      final repo = Get.find<RegisterRepository>();
+      await repo.registerUser(email: email, password: password);
+      isLoading = false;
+      update();
+      showSnackBar(message: "We will send you an email soon",title: "Request has been sent");
+    } catch (e) {
+      if (e is EmailAlreadyInUseException) {
+        showSnackBar(
+            message: "Email already in use", snackPosition: SnackPosition.TOP);
+      } else {
+        showSnackBar(
+            message: "Unknown error occurred,Check your internet connection ",
+            snackPosition: SnackPosition.TOP);
+      }
+    }
   }
 }
