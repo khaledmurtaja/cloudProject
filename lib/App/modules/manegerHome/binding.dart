@@ -7,8 +7,8 @@ class ManegerHomeBinding extends Bindings{
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.lazyPut<ManegerHomeController>(() => ManegerHomeController(),);
-    Get.lazyPut<ManegerHomeRepository>(() => ManegerHomeRepository());
+    Get.lazyPut<ManagerHomeController>(() => ManagerHomeController(),);
+    Get.lazyPut<ManagerHomeRepository>(() => ManagerHomeRepository());
   }
 
 }

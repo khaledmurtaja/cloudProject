@@ -18,7 +18,6 @@ class AddTrainingScreenController extends GetxController {
   String periodTo = "AM";
   bool isEditing = false;
   bool isLoading=false;
-
   changeSelectedCategory({required String newValue}) {
     selectedCategory = newValue;
     update();

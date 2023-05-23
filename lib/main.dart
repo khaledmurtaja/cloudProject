@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/routes/pages.dart';
+import 'package:getx_architecture/routes/routes.dart';
 
+import 'App/data/services/sharedPrefService.dart';
 import 'core/values/firebase_consts.dart';
 import 'firebase_options.dart';
 
@@ -26,6 +28,9 @@ initServices() {
       () => FirebaseFirestore.instance
           .collection(FireBaseConsts.trainingCollection),
       tag: "trainings");
+  Get.lazyPut<AppSharedPref>(
+    () => AppSharedPref().init(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -34,13 +39,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
+      minTextAdapt: true,
+
       builder: (context, child) {
-        return GetMaterialApp(
-          initialRoute: "/login",
+        return GetMaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
+          theme: ThemeData(primarySwatch: Colors.blue, fontFamily: "Tajawal"),
           getPages: AppPages.pages,
         );
       },

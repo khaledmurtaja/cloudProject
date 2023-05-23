@@ -6,3 +6,4 @@ class FailedToUpdatedIdException implements Exception{}
 class FailedToSendEmailException implements Exception{}
 class FailedToAddTrainingException implements Exception{}
 class UnKnowException implements Exception{}
+class EmailAlreadyInUseException implements Exception{}

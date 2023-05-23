@@ -1,42 +1,50 @@
 class SystemUser {
-  late String fullName;
+  late String name;
   late String role;
   late String email;
-  late String urlForSupportDocument;
   late String field;
   late String id;
   late String uid;
+  late String balance;
+  late List<String> selectedTrainingIds;
+  late String userImgUrl;
 
   SystemUser({
-    required this.fullName,
+    required this.name,
     required this.role,
     required this.email,
-    required this.urlForSupportDocument,
     required this.field,
+    required this.userImgUrl,
     required this.id,
-    required this.uid
+    required this.uid,
+    required this.balance,
+    required this.selectedTrainingIds
   });
 
-  SystemUser.fromJson(Map<dynamic, dynamic> json) {
-    fullName = json['name'];
+  SystemUser.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
     role = json['role'];
+    userImgUrl=json['userImgUrl'];
     email = json['email'];
-    urlForSupportDocument = json['urlForSupportDocument'];
     field =json['field'];
     id=json['id'];
     uid=json['uid'];
+    balance=json['balance'];
+    selectedTrainingIds=['selected_training_ids'];
 
   }
 
-  Map<String, String> toJson() {
-    final Map<String, String> data = <String, String>{};
-    data['name'] = fullName;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
     data['role'] = role;
     data['email'] = email;
-    data['urlForSupportDocument'] = urlForSupportDocument;
     data['field'] = field;
     data['id']=id;
     data['uid']=uid;
+    data['balance']=balance;
+    data['userImgUrl']=userImgUrl;
+    data['selected_training_ids']=selectedTrainingIds;
     return data;
   }
 }

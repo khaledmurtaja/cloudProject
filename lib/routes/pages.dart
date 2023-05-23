@@ -1,5 +1,6 @@
 import 'package:get/route_manager.dart';
 import 'package:getx_architecture/App/modules/AddTraining/binding.dart';
+import 'package:getx_architecture/App/modules/login/middleware.dart';
 import 'package:getx_architecture/App/modules/traineeHome/traineeHomeScreen.dart';
 import 'package:getx_architecture/routes/routes.dart';
 
@@ -16,7 +17,9 @@ import '../App/modules/review/requestReview.dart';
 abstract class AppPages {
   static final pages = [
     GetPage(
-        name: Routes.LOGIN, page: () => LoginScreen(), binding: LoginBinding()),
+  // name: Routes.LOGIN, page: () => LoginScreen(), binding: LoginBinding()),
+
+  name: Routes.LOGIN, page: () => LoginScreen(), binding: LoginBinding(),middlewares: [LoginPageMiddleware()]),
     GetPage(
         name: Routes.REGISTER,
         page: () => RegisterScreen(),
@@ -25,7 +28,7 @@ abstract class AppPages {
     GetPage(name: Routes.ADVISOR_HOME, page: () => const AdvisorHomesScreen()),
     GetPage(
         name: Routes.MANEGER_HOME,
-        page: () => const ManegerHomesScreen(),
+        page: () => const ManagerHomesScreen(),
         binding: ManegerHomeBinding()),
     GetPage(name: Routes.TRAINEE_HOME, page: () => const TraineeHomeScreen()),
     GetPage(name: Routes.ADD_TRAINING, page: ()=>const AddTrainingScreen(),binding: AddTrainingScreenBinding())
