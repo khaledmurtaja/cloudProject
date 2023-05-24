@@ -12,6 +12,7 @@ import 'package:getx_architecture/core/values/roles.dart';
 
 import '../../data/models/attendanceDate.dart';
 import '../../data/models/user.dart';
+import '../../data/services/sharedPrefService.dart';
 import 'advisorsPage.dart';
 import 'coursesPage.dart';
 
@@ -84,11 +85,19 @@ class ManagerHomeController extends GetxController {
 
   @override
   Future<void> onInit() async {
-    await setAdvisorCount();
-    await setCourseCount();
-    await fetchUsersWithEmptyId();
-    await getUsers(category: "FrontEnd", role: Roles.advisor);
-    update();
+try {
+  await setAdvisorCount();
+  await setCourseCount();
+  await fetchUsersWithEmptyId();
+  await getUsers(category: "FrontEnd", role: Roles.advisor);
+  update();
+}catch(error){
+  print(error);
+}
+  }
+
+  @override
+  Future<void> onReady() async {
   }
 
   Future<void> fetchUsersWithEmptyId() async {
@@ -109,6 +118,7 @@ class ManagerHomeController extends GetxController {
       final repo = Get.find<ManagerHomeRepository>();
       listOfSystemUser = await repo.getUsers(category: category, role: role);
       if (role == Roles.advisor) {
+        print(listOfSystemUser.length);
         for (var element in listOfSystemUser) {
           advisors.add(element.name);
         }

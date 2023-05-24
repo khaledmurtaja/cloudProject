@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/utils/helperFunctions.dart';
+import '../../data/services/sharedPrefService.dart';
 import 'controller.dart';
 
 class LoginRepository {
@@ -14,8 +15,12 @@ class LoginRepository {
       try {
         String? email = await _getEmailFromId(id: id);
         if (email != null) {
-          await FirebaseAuth.instance
+          UserCredential userCredential=await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: email, password: password);
+          final sharedPref = Get.find<AppSharedPref>();
+          Future.delayed(const Duration(milliseconds: 800),(){
+            sharedPref.putStringValue(key: "Uid", value: userCredential.user!.uid);
+          });
         } else {
           throw IdNotFoundException();
         }

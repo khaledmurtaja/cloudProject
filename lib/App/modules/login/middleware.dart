@@ -9,11 +9,8 @@ class LoginPageMiddleware extends GetMiddleware {
   @override
   Future<GetNavConfig> redirectDelegate(GetNavConfig route) async {
     String? role = "";
-    print("role");
-
     AppSharedPref appSharedPref = Get.find<AppSharedPref>();
     role = await appSharedPref.getStringValue(key: "userrole");
-
     if (role == null || role == "") {
       return route;
     } else {
