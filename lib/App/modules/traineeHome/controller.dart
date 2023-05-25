@@ -9,6 +9,8 @@ import '../../data/models/ad.dart';
 import '../../data/models/training.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../../data/services/sharedPrefService.dart';
+
 class TraineeHomeController extends GetxController {
   final RxInt balance = 0.obs;
   final ads = <Ad>[].obs;
@@ -22,8 +24,13 @@ class TraineeHomeController extends GetxController {
 
   final CollectionReference trainingsCollection =
       FirebaseFirestore.instance.collection('trainings');
+
   static TraineeHomeController get to => Get.find();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final sharedPref = Get.find<AppSharedPref>();
+  String uId = '';
+  String category = '';
+
   // Future<void> trackUserActivity(String activity) async {
   //   await analytics.logEvent(
   //     name: 'hhhhhhh',
@@ -32,12 +39,42 @@ class TraineeHomeController extends GetxController {
   // }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    fetchTraineeData();
-    fetchAds();
-    fetchRecommendedTrainings('mobile development');
-    fetchNewTrainingsTrainings();
+    // await fetchTraineeData();
+    await getUid().then((value) {
+      fetchAds();
+      fetchRecommendedTrainings(category, uId);
+      fetchNewTrainingsTrainings(uId);
+    });
+  }
+
+  Future<void> getUid() async {
+    // await sharedPref.getStringValue(key: 'Uid') ??
+    uId = '3Q3UOvGDz2ouzXTtOAs2';
+    await getUserCategoryValue(uId);
+    update();
+  }
+
+  Future<void> getUserCategoryValue(String userId) async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        category = data['field'];
+        update();
+      } else {
+        // Document doesn't exist
+        print('User document does not exist');
+      }
+    } catch (e) {
+      // Error occurred while retrieving the document
+      print('Error getting user document: $e');
+    }
   }
 
   void fetchAds() async {
@@ -66,9 +103,9 @@ class TraineeHomeController extends GetxController {
     }
   }
 
-  Future<void> fetchRecommendedTrainings(String category) async {
+  Future<void> fetchRecommendedTrainings(String category, String userId) async {
     try {
-      final userId = 'XLPFZgHwDtjhzzjG3vRk';
+      // final userId = '3Q3UOvGDz2ouzXTtOAs2';
 
       final userSnapshot = await FirebaseFirestore.instance
           .collection('users')
@@ -90,7 +127,7 @@ class TraineeHomeController extends GetxController {
           name: document['trainingName'],
           description: document['description'],
           isPaidCourse: document['isPaidCourse'],
-          price: document['price'],
+          price: int.parse(document['price']),
           dates: List<Map<String, dynamic>>.from(document['dates']),
           category: '',
           id: document.id,
@@ -99,19 +136,21 @@ class TraineeHomeController extends GetxController {
           advisorId: document['advisorId'],
         );
       }).toList();
+
       recommendedTrainings.assignAll(fetchedTrainings);
     } catch (error) {
       // Handle error
+      print("error ggg $error");
     } finally {
       isLoadingRecommendedTrainings.value = false;
     }
   }
 
-  Future<void> fetchNewTrainingsTrainings() async {
+  Future<void> fetchNewTrainingsTrainings(String userId) async {
     try {
       final traineeSnapshot = await FirebaseFirestore.instance
           .collection('users')
-          .doc('XLPFZgHwDtjhzzjG3vRk')
+          .doc(userId)
           .get();
       List<dynamic> registeredTrainingIds =
           traineeSnapshot.data().toString().contains('selected_training_ids')
@@ -125,12 +164,12 @@ class TraineeHomeController extends GetxController {
               .get();
 
       final List<Training> fetchedTrainings = snapshot.docs.map((document) {
-        print(document.id);
+        // print(document.id);
         return Training(
             name: document['trainingName'],
             description: document['description'],
             isPaidCourse: document['isPaidCourse'],
-            price: document['price'],
+            price: int.parse(document['price']),
             dates: List<Map<String, dynamic>>.from(document['dates']),
             category: '',
             id: document.id,
@@ -138,7 +177,7 @@ class TraineeHomeController extends GetxController {
             advisorName: document['advisorName'],
             advisorId: document['advisorId']);
       }).toList();
-      print(fetchedTrainings.length);
+      // print(fetchedTrainings.length);
       newTrainings.assignAll(fetchedTrainings);
       update();
     } catch (error) {
@@ -171,9 +210,7 @@ class TraineeHomeController extends GetxController {
   }
 
   void recordTraining(BuildContext context, Training training,
-      Map<String, dynamic> selectedDate) {
-    final userId = 'XLPFZgHwDtjhzzjG3vRk';
-
+      Map<String, dynamic> selectedDate, String userId) {
     FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -228,9 +265,9 @@ class TraineeHomeController extends GetxController {
                     .collection('users')
                     .doc(userId)
                     .update({
-                  'balance': updatedBalance,
+                  'balance': updatedBalance.toString(),
                 }).then((_) {
-                  saveTrainingData(context, training, selectedDate);
+                  saveTrainingData(context, training, selectedDate, uId);
                 }).catchError((error) {
                   Get.snackbar(
                     'An error occurred!',
@@ -264,11 +301,11 @@ class TraineeHomeController extends GetxController {
               );
             });
           } else {
-            saveTrainingData(context, training, selectedDate);
+            saveTrainingData(context, training, selectedDate, uId);
           }
         }
       } else {
-        saveTrainingData(context, training, selectedDate);
+        saveTrainingData(context, training, selectedDate, uId);
 
         // The collection "selected_training_ids_times" does not exist for the user
         // Handle this case accordingly
@@ -286,108 +323,6 @@ class TraineeHomeController extends GetxController {
     });
   }
 
-/*
-  void recordTraining(BuildContext context, Training training,
-      Map<String, dynamic> selectedDate) {
-    final userId = 'XLPFZgHwDtjhzzjG3vRk';
-
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('selected_training_ids_times')
-        .get()
-        .then((querySnapshot) {
-      bool hasConflict = false;
-
-      for (var doc in querySnapshot.docs) {
-        List<dynamic> dates = doc.data()['dates'];
-
-        for (var date in dates) {
-          if (checkConflict(selectedDate, date)) {
-            hasConflict = true;
-            break;
-          }
-        }
-        if (hasConflict) {
-          break;
-        }
-      }
-
-      if (hasConflict) {
-        Get.snackbar(
-          'An error occurred!',
-          'Conflicting training date. Please choose a different date.',
-          snackPosition: SnackPosition.BOTTOM,
-          colorText: Colors.white,
-          backgroundColor: Colors.redAccent,
-          icon: const Icon(Icons.add_alert),
-        );
-      } else {
-        if (training.isPaidCourse) {
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .get()
-              .then((userSnapshot) {
-            double traineeBalance = userSnapshot.data()!['balance'] ?? 0.0;
-
-            if (traineeBalance >= training.price) {
-              double updatedBalance = traineeBalance - training.price;
-
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(userId)
-                  .update({
-                'balance': updatedBalance,
-              }).then((_) {
-                saveTrainingData(context, training, selectedDate);
-              }).catchError((error) {
-                Get.snackbar(
-                  'An error occurred!',
-                  'Failed to deduct course price from balance',
-                  snackPosition: SnackPosition.BOTTOM,
-                  colorText: Colors.white,
-                  backgroundColor: Colors.redAccent,
-                  icon: const Icon(Icons.add_alert),
-                );
-              });
-            } else {
-              Get.snackbar(
-                'An error occurred!',
-                'Insufficient balance for the course',
-                snackPosition: SnackPosition.BOTTOM,
-                colorText: Colors.white,
-                backgroundColor: Colors.redAccent,
-                icon: const Icon(Icons.add_alert),
-              );
-            }
-          }).catchError((error) {
-            Get.snackbar(
-              'An error occurred!',
-              'Failed to retrieve trainee data',
-              snackPosition: SnackPosition.BOTTOM,
-              colorText: Colors.white,
-              backgroundColor: Colors.redAccent,
-              icon: const Icon(Icons.add_alert),
-            );
-          });
-        } else {
-          saveTrainingData(context, training, selectedDate);
-        }
-      }
-    }).catchError((error) {
-      print('object $error');
-      Get.snackbar(
-        'An error occurred!',
-        'Failed to retrieve previously selected training dates',
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.white,
-        backgroundColor: Colors.redAccent,
-        icon: const Icon(Icons.add_alert),
-      );
-    });
-  }
-*/
   bool checkConflict(
       Map<String, dynamic> selectedDate, Map<String, dynamic> registeredDate) {
     String selectedDay = selectedDate['day'];
@@ -411,9 +346,7 @@ class TraineeHomeController extends GetxController {
   }
 
   void saveTrainingData(BuildContext context, Training training,
-      Map<String, dynamic> selectedDate) {
-    final userId = 'XLPFZgHwDtjhzzjG3vRk';
-
+      Map<String, dynamic> selectedDate, String userId) {
     FirebaseFirestore.instance.collection('users').doc(userId).update({
       'selected_training_ids': FieldValue.arrayUnion([training.id]),
     }).then((_) {
@@ -430,8 +363,8 @@ class TraineeHomeController extends GetxController {
         isLoadingNewTrainings.value = true;
 
         isLoadingRecommendedTrainings.value = true;
-        fetchNewTrainingsTrainings();
-        fetchRecommendedTrainings('mobile development');
+        fetchNewTrainingsTrainings(uId);
+        fetchRecommendedTrainings('FrontEnd', uId);
         Get.snackbar(
           'The operation succeeded !',
           "Training recorded successfully",
@@ -462,11 +395,11 @@ class TraineeHomeController extends GetxController {
     });
   }
 
-  void fetchTraineeData() async {
+  void fetchTraineeData(String userId) async {
     try {
       final DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
-          .doc('XLPFZgHwDtjhzzjG3vRk')
+          .doc(userId)
           .get();
 
       if (snapshot.exists) {
@@ -659,3 +592,107 @@ class TraineeHomeController extends GetxController {
   }
 
   */
+
+
+  /*
+  void recordTraining(BuildContext context, Training training,
+      Map<String, dynamic> selectedDate) {
+    final userId = 'XLPFZgHwDtjhzzjG3vRk';
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('selected_training_ids_times')
+        .get()
+        .then((querySnapshot) {
+      bool hasConflict = false;
+
+      for (var doc in querySnapshot.docs) {
+        List<dynamic> dates = doc.data()['dates'];
+
+        for (var date in dates) {
+          if (checkConflict(selectedDate, date)) {
+            hasConflict = true;
+            break;
+          }
+        }
+        if (hasConflict) {
+          break;
+        }
+      }
+
+      if (hasConflict) {
+        Get.snackbar(
+          'An error occurred!',
+          'Conflicting training date. Please choose a different date.',
+          snackPosition: SnackPosition.BOTTOM,
+          colorText: Colors.white,
+          backgroundColor: Colors.redAccent,
+          icon: const Icon(Icons.add_alert),
+        );
+      } else {
+        if (training.isPaidCourse) {
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get()
+              .then((userSnapshot) {
+            double traineeBalance = userSnapshot.data()!['balance'] ?? 0.0;
+
+            if (traineeBalance >= training.price) {
+              double updatedBalance = traineeBalance - training.price;
+
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .update({
+                'balance': updatedBalance,
+              }).then((_) {
+                saveTrainingData(context, training, selectedDate);
+              }).catchError((error) {
+                Get.snackbar(
+                  'An error occurred!',
+                  'Failed to deduct course price from balance',
+                  snackPosition: SnackPosition.BOTTOM,
+                  colorText: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  icon: const Icon(Icons.add_alert),
+                );
+              });
+            } else {
+              Get.snackbar(
+                'An error occurred!',
+                'Insufficient balance for the course',
+                snackPosition: SnackPosition.BOTTOM,
+                colorText: Colors.white,
+                backgroundColor: Colors.redAccent,
+                icon: const Icon(Icons.add_alert),
+              );
+            }
+          }).catchError((error) {
+            Get.snackbar(
+              'An error occurred!',
+              'Failed to retrieve trainee data',
+              snackPosition: SnackPosition.BOTTOM,
+              colorText: Colors.white,
+              backgroundColor: Colors.redAccent,
+              icon: const Icon(Icons.add_alert),
+            );
+          });
+        } else {
+          saveTrainingData(context, training, selectedDate);
+        }
+      }
+    }).catchError((error) {
+      print('object $error');
+      Get.snackbar(
+        'An error occurred!',
+        'Failed to retrieve previously selected training dates',
+        snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.white,
+        backgroundColor: Colors.redAccent,
+        icon: const Icon(Icons.add_alert),
+      );
+    });
+  }
+*/

@@ -17,7 +17,9 @@ import 'package:getx_architecture/core/utils/helperFunctions.dart';
 import 'package:image_network/image_network.dart';
 
 import '../../../core/values/colors.dart';
+import '../../../routes/routes.dart';
 import '../../widgets/customButtonWidget.dart';
+import '../allTrainings/controller.dart';
 
 class TraineeHomeScreen extends GetView<TraineeHomeController> {
   const TraineeHomeScreen({Key? key}) : super(key: key);
@@ -26,6 +28,7 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AdaptiveNavBar(
+        automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: Colors.white,
         screenWidth: getMediaQueryWidth(context: context, value: 1440),
@@ -43,16 +46,21 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
             },
           ),
           NavBarItem(
-            text: "My Learning",
-            onTap: () {
-              Get.toNamed('/traineeLearning');
-            },
-          ),
+              text: "My Learning",
+              onTap: () {
+                Get.rootDelegate.toNamed(
+                  Routes.TRAINEE_LEARNING,
+                  arguments: {
+                    'uId': controller.uId,
+                  },
+                );
+              }
+              //   Get.toNamed('/traineeLearning');
+              // },
+              ),
           NavBarItem(
             text: "My profile",
             onTap: () {
-
-              
               Get.toNamed('/traineeProfile');
             },
           ),
@@ -116,27 +124,40 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
                       child: CircularProgressIndicator(),
                     )
                   : SizedBox(
-                      height: 380,
+                      height: 350,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 120),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount:
-                              min(controller.recommendedTrainings.length, 4),
-                          itemBuilder: (BuildContext context, int index) {
-                            final training =
-                                controller.recommendedTrainings[index];
-                            return TrainingCard(
-                              training: training,
-                              controller: controller,
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(
-                              width: 20,
-                            );
-                          },
-                        ),
+                        child: controller.recommendedTrainings.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'New Trainings will be available soon!',
+                                  style: TextStyle(
+                                      color: descriptionColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 24.spMin),
+                                ),
+                              )
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: min(
+                                    controller.recommendedTrainings.length, 4),
+                                itemBuilder: (BuildContext context, int index) {
+                                  final training =
+                                      controller.recommendedTrainings[index];
+                                  return TrainingCard(
+                                    training: training,
+                                    controller: controller,
+                                    imageHeight: 200,
+                                    imageWidth: 282,
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    width: 20,
+                                  );
+                                },
+                              ),
                       ),
                     ),
             ),
@@ -144,11 +165,23 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
               height: 50,
             ),
             MoreWidget(
-              onPressed: () {},
+              onPressed: () {
+                // Map<String, dynamic> parameter = {
+                //   'trainingType': 'RecommendedTrainings',
+                // };
+                Get.delete<AllTrainingsController>();
+
+                Get.rootDelegate.toNamed(
+                  Routes.ALL_TRAININGS,
+                  arguments: {
+                    'trainingType': 'RecommendedTrainings',
+                  },
+                );
+              },
             ),
-            const SizedBox(
-              height: 100,
-            ),
+            // const SizedBox(
+            //   height: 100,
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 120, top: 43),
               child: Text(
@@ -166,25 +199,40 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
                       child: CircularProgressIndicator(),
                     )
                   : SizedBox(
-                      height: 380,
+                      height: 350,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 120),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: min(controller.newTrainings.length, 4),
-                          itemBuilder: (BuildContext context, int index) {
-                            final training = controller.newTrainings[index];
-                            return TrainingCard(
-                              training: training,
-                              controller: controller,
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(
-                              width: 20,
-                            );
-                          },
-                        ),
+                        child: controller.newTrainings.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'New Trainings will be available soon!',
+                                  style: TextStyle(
+                                      color: descriptionColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 24.spMin),
+                                ),
+                              )
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    min(controller.newTrainings.length, 4),
+                                itemBuilder: (BuildContext context, int index) {
+                                  final training =
+                                      controller.newTrainings[index];
+                                  return TrainingCard(
+                                    training: training,
+                                    controller: controller,
+                                    imageHeight: 200,
+                                    imageWidth: 282,
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    width: 20,
+                                  );
+                                },
+                              ),
                       ),
                     ),
             ),
@@ -192,7 +240,11 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
               height: 50,
             ),
             MoreWidget(
-              onPressed: () {},
+              onPressed: () {
+                Get.rootDelegate.toNamed(Routes.ALL_TRAININGS, arguments: {
+                  'trainingType': 'NewTrainings',
+                });
+              },
             ),
             const SizedBox(
               height: 20,

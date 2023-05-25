@@ -17,9 +17,11 @@ class ImageGradint extends StatelessWidget {
     return Stack(
       children: <Widget>[
         ImageNetwork(
-            image: controller.training!.imageUrl,
-            height: getMediaQueryHeight(context: context, value: 510),
-            width: getMediaQueryWidth(context: context, value: 600)),
+          image: controller.training!.imageUrl,
+          height: getMediaQueryHeight(context: context, value: 510),
+          width: getMediaQueryWidth(context: context, value: 1440),
+          fitWeb: BoxFitWeb.fill,
+        ),
         Container(
           height: getMediaQueryHeight(context: context, value: 510),
           decoration: BoxDecoration(

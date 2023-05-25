@@ -32,7 +32,7 @@ class TabBarViewItem extends StatelessWidget {
             height: getMediaQueryHeight(context: context, value: 20),
           ),
           SizedBox(
-            width: getMediaQueryWidth(context: context, value: 400),
+            width: getMediaQueryWidth(context: context, value: 600),
             child: Text(
               controller.training!.description,
               maxLines: 5,

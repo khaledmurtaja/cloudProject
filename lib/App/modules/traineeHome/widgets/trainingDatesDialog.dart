@@ -34,8 +34,11 @@ class _TrainingDatesDialogState extends State<TrainingDatesDialog> {
               Map<String, dynamic> selectedDate = widget
                   .training.dates[widget.traineeHomeController.selectedIndex];
 
-              widget.traineeHomeController
-                  .recordTraining(context, widget.training, selectedDate);
+              widget.traineeHomeController.recordTraining(
+                  context,
+                  widget.training,
+                  selectedDate,
+                  widget.traineeHomeController.uId);
               widget.traineeHomeController.indicatorUpdate();
 
               Navigator.of(context).pop();

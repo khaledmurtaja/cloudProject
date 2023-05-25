@@ -5,7 +5,7 @@ import '../../data/models/training.dart';
 import '../../data/models/user.dart';
 
 class TrainingDetaileController extends GetxController {
-  dynamic argumentData = Get.arguments;
+  dynamic argumentData = Get.rootDelegate;
   Training? training;
 
   SystemUser? advisor;
@@ -14,7 +14,8 @@ class TrainingDetaileController extends GetxController {
 
   @override
   void onInit() async {
-    training = argumentData[0]['trainingObject'] as Training;
+    training = await argumentData.arguments()['trainingObject'] as Training;
+    print(training);
     await fetchUser();
     isLoading.value = false;
     super.onInit();
@@ -30,20 +31,16 @@ class TrainingDetaileController extends GetxController {
       if (snapshot.docs.isNotEmpty) {
         DocumentSnapshot userSnapshot = snapshot.docs.first;
         Map<String, dynamic> data = userSnapshot.data() as Map<String, dynamic>;
-        advisor =
-        SystemUser(
-                name:  data['name'],
-                role: '',
-                email: data['email'],
-                field:  data['field'],
-                id: "",
-                uid: '',
-                balance: '',
-                selectedTrainingIds: [],
-                userImgUrl: '');
-        
-        
-   
+        advisor = SystemUser(
+            name: data['name'],
+            role: '',
+            email: data['email'],
+            field: data['field'],
+            id: "",
+            uid: '',
+            balance: '',
+            selectedTrainingIds: [],
+            userImgUrl: '');
       } else {
         advisor = null;
       }

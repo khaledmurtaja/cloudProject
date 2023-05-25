@@ -35,7 +35,7 @@ class TrainingTopDetails extends StatelessWidget {
             height: getMediaQueryHeight(context: context, value: 24),
           ),
           SizedBox(
-            width: getMediaQueryWidth(context: context, value: 300),
+            width: getMediaQueryWidth(context: context, value: 1000),
             child: Text(
               controller.training!.description,
               maxLines: 2,

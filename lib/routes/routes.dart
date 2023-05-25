@@ -16,4 +16,5 @@ abstract class Routes {
   static const TRAINEE_LEARNING = "/traineeLearning";
   static const TRAINEE_PROFILE = "/traineeProfile";
   static const TRAINING_DETAILS = "/trainingDetaile";
+  static const ALL_TRAININGS = "/allTrainings";
 }

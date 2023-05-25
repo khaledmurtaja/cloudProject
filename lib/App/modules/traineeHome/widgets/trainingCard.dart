@@ -5,6 +5,7 @@ import 'package:image_network/image_network.dart';
 
 import '../../../../core/utils/helperFunctions.dart';
 import '../../../../core/values/colors.dart';
+import '../../../../routes/routes.dart';
 import '../../../data/models/training.dart';
 import '../../../widgets/customButtonWidget.dart';
 import '../controller.dart';
@@ -14,18 +15,26 @@ class TrainingCard extends StatelessWidget {
     super.key,
     required this.training,
     required this.controller,
+    required this.imageHeight, required this.imageWidth,
   });
 
   final Training training;
   final TraineeHomeController controller;
+  final int imageHeight;
+    final double imageWidth;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/trainingDetaile', arguments: [
-          {'trainingObject': training}
-        ]);
+        Map<String, dynamic> parameter = {
+          'trainingObject': training,
+        };
+        Get.rootDelegate.toNamed(Routes.TRAINING_DETAILS, arguments: parameter);
+
+        // Get.toNamed('/trainingDetaile', arguments: [
+        //   {'trainingObject': training}
+        // ]);
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -38,8 +47,9 @@ class TrainingCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.0),
               child: ImageNetwork(
                 image: training.imageUrl,
-                width: 282,
-                height: getMediaQueryHeight(context: context, value: 171),
+                width: imageWidth,
+                height:
+                    getMediaQueryHeight(context: context, value: imageHeight),
                 fitWeb: BoxFitWeb.cover,
               ),
             ),
@@ -145,15 +155,21 @@ class TrainingCard extends StatelessWidget {
               height: getMediaQueryHeight(context: context, value: 16),
             ),
             GetBuilder<TraineeHomeController>(
-                builder: (newController) => Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: CustomButton(
-                        onPressed: () {
-                          controller.showTrainingDatesDialog(
-                              context, training, controller);
-                        },
-                        text: 'Subscribe Now',
-                        width: 250,
+                builder: (newController) => IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(width: 15.0),
+                          CustomButton(
+                            onPressed: () {
+                              controller.showTrainingDatesDialog(
+                                  context, training, controller);
+                            },
+                            text: 'Subscribe Now',
+                            width: 250,
+                          ),
+                          const SizedBox(width: 15.0),
+                        ],
                       ),
                     )),
           ],
