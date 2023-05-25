@@ -92,7 +92,7 @@ class LoginScreen extends GetView<LoginController> {
                         CustomFormField(
                           topContentPadding: 18,
                           bottomContentPadding: 18,
-                          leftPadding: 0,
+                          leftPadding: 8,
                           validator: validateId,
                           controller: controller.idController,
                           hint: "Enter your ID",
@@ -119,7 +119,7 @@ class LoginScreen extends GetView<LoginController> {
                             return CustomFormField(
                               topContentPadding: 18,
                               bottomContentPadding: 18,
-                              leftPadding: 0,
+                              leftPadding: 8,
                               validator: validatePasswordLogin,
                               controller: controller.passwordController,
                               isPassword: controller.securePassword,

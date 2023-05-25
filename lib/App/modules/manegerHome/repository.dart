@@ -98,6 +98,7 @@ class ManagerHomeRepository {
           .where('field', isEqualTo: category)
           .where('role', isEqualTo: role)
           .get();
+      print(role);
       final List<SystemUser> advisors = querySnapshot.docs
           .map((doc) => SystemUser.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
