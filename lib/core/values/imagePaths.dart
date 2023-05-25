@@ -10,6 +10,7 @@ class ImagePaths{
   static const String courseNameIcon="images/courseNameIcon.svg";
   static const String advisorGreyIcon="images/advisorGrey.svg";
   static const String categoryGreyIcon="images/bookGrey.svg";
+  static const String blackRequestsIcon="images/requestBlack.svg";
 
 
 

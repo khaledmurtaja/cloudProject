@@ -9,15 +9,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/core/values/enums.dart';
 import 'package:getx_architecture/core/values/roles.dart';
-
+import '../../../core/values/email_service_consts.dart';
 import '../../data/models/attendanceDate.dart';
 import '../../data/models/user.dart';
-import '../../data/services/sharedPrefService.dart';
 import 'advisorsPage.dart';
 import 'coursesPage.dart';
 
 class ManagerHomeController extends GetxController {
-  QuerySnapshot? snapshot;
+  QuerySnapshot? usersWithNoIds;
   bool isLoading = false;
   bool isStatisticsSelected = true;
   bool isCoursesSelected = false;
@@ -45,6 +44,9 @@ class ManagerHomeController extends GetxController {
   String imageName = "Choose Image";
   bool isPaidCourse = false;
   bool addingTrainingLoading = false;
+  bool isFetchingUsersWithEmptyIdLoading = false;
+  bool isVerifying = false;
+  String selectedUId="";
   List<String> categories = [
     "DataBase",
     "Design",
@@ -62,6 +64,7 @@ class ManagerHomeController extends GetxController {
   bool isEditing = false;
   CoursePaying payingValue = CoursePaying.free;
   List<SystemUser> listOfSystemUser = [];
+  List<SystemUser> usersWithEmptyIdList = [];
   List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -85,30 +88,36 @@ class ManagerHomeController extends GetxController {
 
   @override
   Future<void> onInit() async {
-try {
-  await setAdvisorCount();
-  await setCourseCount();
-  await fetchUsersWithEmptyId();
-  await getUsers(category: "FrontEnd", role: Roles.advisor);
-  update();
-}catch(error){
-  print(error);
-}
-  }
-
-  @override
-  Future<void> onReady() async {
+    try {
+      await setAdvisorCount();
+      await setCourseCount();
+      await fetchUsersWithEmptyId();
+      await getUsers(category: "FrontEnd", role: Roles.advisor);
+      update();
+    } catch (error) {
+      print(error);
+    }
   }
 
   Future<void> fetchUsersWithEmptyId() async {
-    snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('id', isEqualTo: '')
-        .get();
-    final List<QueryDocumentSnapshot<Object?>>? documents = snapshot?.docs;
-    documents?.forEach((document) {
-      // Do something with the document data
-    });
+    try {
+      isFetchingUsersWithEmptyIdLoading = true;
+      update();
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('id', isEqualTo: '')
+          .get();
+      usersWithEmptyIdList = querySnapshot.docs
+          .map((doc) => SystemUser.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+      isFetchingUsersWithEmptyIdLoading = false;
+      update();
+    } catch (e) {
+      isFetchingUsersWithEmptyIdLoading = false;
+      update();
+      showSnackBar(message: "check internet connection");
+      print(e);
+    }
   }
 
   getUsers({required String category, required String role}) async {
@@ -131,11 +140,16 @@ try {
 
   updateIdField({required String uid, required String newId}) async {
     try {
+      isVerifying = true;
+      update();
       await repo.updateIdField(uid: uid, newId: newId);
-      //back
+      await fetchUsersWithEmptyId();
+      update();
     } catch (e) {
+      isVerifying = false;
+      update();
       showSnackBar(
-          message: "failed to update user ID",
+          message: "failed to update user ID,Check internet connection",
           snackPosition: SnackPosition.TOP);
     }
   }
@@ -146,10 +160,18 @@ try {
       required String message}) async {
     try {
       await repo.sendEmail(name: name, email: email, message: message);
-      showSnackBar(message: "success");
-    } catch (e) {
+      isVerifying = false;
+      update();
       showSnackBar(
-          message: "failed to send email", snackPosition: SnackPosition.TOP);
+          title: "Success",
+          message: "User Verified",
+          backGroundColor: Colors.green);
+    } catch (e) {
+      isVerifying = false;
+      update();
+      showSnackBar(
+          message: "failed to send email,check internet connection",
+          snackPosition: SnackPosition.TOP);
     }
   }
 
@@ -279,7 +301,7 @@ try {
     try {
       filePickerResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'png','jpeg'],
+        allowedExtensions: ['jpg', 'png', 'jpeg'],
       );
       imageName = filePickerResult!.files.first.name;
       update();

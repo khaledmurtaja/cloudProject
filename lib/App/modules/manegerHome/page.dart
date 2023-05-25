@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/App/modules/manegerHome/controller.dart';
-import 'package:getx_architecture/App/modules/manegerHome/widgets/dashBoardItemCard.dart';
 import 'package:getx_architecture/core/values/imagePaths.dart';
 import '../../../core/utils/helperFunctions.dart';
 import '../../../core/values/colors.dart';
