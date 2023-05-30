@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:getx_architecture/App/data/models/ad.dart';
 import 'package:getx_architecture/App/modules/manegerHome/repository.dart';
 import 'package:getx_architecture/App/modules/manegerHome/requestsPage.dart';
 import 'package:getx_architecture/App/modules/manegerHome/statisticsPage.dart';
@@ -9,10 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/core/values/enums.dart';
 import 'package:getx_architecture/core/values/roles.dart';
-import '../../../core/values/email_service_consts.dart';
 import '../../data/models/attendanceDate.dart';
 import '../../data/models/user.dart';
 import 'advisorsPage.dart';
+import 'bannerPage.dart';
 import 'coursesPage.dart';
 
 class ManagerHomeController extends GetxController {
@@ -23,15 +24,24 @@ class ManagerHomeController extends GetxController {
   bool isRequestsSelected = false;
   bool isTraineesSelected = false;
   bool isAdvisorsSelected = false;
+  bool isBannerSelected = false;
   String courseCategory = "";
   int advisorCount = 0;
   int traineeCount = 0;
+  int courseCount = 0;
+  int requestCount = 0;
   final formKey = GlobalKey<FormState>();
+  final bannerFormKey = GlobalKey<FormState>();
+  final updateBannerFormKey = GlobalKey<FormState>();
   String selectedDay = "saturday";
   String advisorCountText = "";
   String traineeCountText = "";
+  String coursesCountText = "";
+  String requestsCountText = "";
   bool isAdvisorLoading = false;
   bool isTraineeLoading = false;
+  bool isCoursesLoading = false;
+  bool isRequestsLoading = false;
   int currentPageIndex = 0;
   String advisorName = "";
   String advisorId = "";
@@ -42,11 +52,17 @@ class ManagerHomeController extends GetxController {
   String minutesTo = "00";
   String periodTo = "AM";
   String imageName = "Choose Image";
+  String bannerImageName = "Choose Image";
+  List<Ad> banners = [];
   bool isPaidCourse = false;
   bool addingTrainingLoading = false;
+  bool addingBannerLoading = false;
+  bool updatingBannerLoading=false;
   bool isFetchingUsersWithEmptyIdLoading = false;
   bool isVerifying = false;
-  String selectedUId="";
+  String selectedUId = "";
+  bool isGettingBannersLoading = false;
+  int bannersLength=0;
   List<String> categories = [
     "DataBase",
     "Design",
@@ -58,9 +74,14 @@ class ManagerHomeController extends GetxController {
   ];
   List<String> advisors = [];
   bool isCreateCourseButtonPressed = false;
+  bool isCreateBannerButtonPressed = false;
   List<AttendanceDate> attendanceDates = [];
   FilePickerResult? filePickerResult;
+  FilePickerResult? bannerFilePickerResult;
   String imgUrl = "";
+  String bannerImageUrl = "";
+  TextEditingController bannerName = TextEditingController();
+  TextEditingController bannerUpdatedName = TextEditingController();
   bool isEditing = false;
   CoursePaying payingValue = CoursePaying.free;
   List<SystemUser> listOfSystemUser = [];
@@ -81,7 +102,8 @@ class ManagerHomeController extends GetxController {
     CoursesPage(),
     RequestsPage(),
     TraineePage(),
-    AdvisorPage()
+    AdvisorPage(),
+    BannerPage()
   ];
 
   final repo = Get.find<ManagerHomeRepository>();
@@ -90,8 +112,11 @@ class ManagerHomeController extends GetxController {
   Future<void> onInit() async {
     try {
       await setAdvisorCount();
-      await setCourseCount();
+      await setTraineeCount();
+      await setRequestsCount();
+      await setCoursesCount();
       await fetchUsersWithEmptyId();
+      await getBanners();
       await getUsers(category: "FrontEnd", role: Roles.advisor);
       update();
     } catch (error) {
@@ -127,13 +152,29 @@ class ManagerHomeController extends GetxController {
       final repo = Get.find<ManagerHomeRepository>();
       listOfSystemUser = await repo.getUsers(category: category, role: role);
       if (role == Roles.advisor) {
-        print(listOfSystemUser.length);
         for (var element in listOfSystemUser) {
           advisors.add(element.name);
+          //getBanners
         }
       }
       update();
     } catch (error) {
+      print(error);
+    }
+  }
+
+  getBanners() async {
+    try {
+      banners = [];
+      isGettingBannersLoading = true;
+      update();
+      final repo = Get.find<ManagerHomeRepository>();
+      banners = await repo.getBanners();
+      isGettingBannersLoading = false;
+      update();
+    } catch (error) {
+      isGettingBannersLoading = false;
+      update();
       print(error);
     }
   }
@@ -225,6 +266,17 @@ class ManagerHomeController extends GetxController {
     update();
   }
 
+  onBannerSelected() {
+    isStatisticsSelected = false;
+    isCoursesSelected = false;
+    isRequestsSelected = false;
+    isTraineesSelected = false;
+    isAdvisorsSelected = false;
+    isBannerSelected = true;
+    currentPageIndex = 5;
+    update();
+  }
+
   setAdvisorCount() async {
     try {
       final repo = Get.find<ManagerHomeRepository>();
@@ -242,7 +294,7 @@ class ManagerHomeController extends GetxController {
     }
   }
 
-  setCourseCount() async {
+  setTraineeCount() async {
     try {
       final repo = Get.find<ManagerHomeRepository>();
       isTraineeLoading = true;
@@ -254,6 +306,40 @@ class ManagerHomeController extends GetxController {
     } catch (exception) {
       isTraineeLoading = false;
       traineeCountText = "failed to get data";
+      update();
+      showSnackBar(message: "something went wrong,check internet connection");
+    }
+  }
+
+  setCoursesCount() async {
+    try {
+      final repo = Get.find<ManagerHomeRepository>();
+      isCoursesLoading = true;
+      update();
+      courseCount = await repo.getCoursesCount();
+      isCoursesLoading = false;
+      coursesCountText = "$courseCount";
+      update();
+    } catch (exception) {
+      isCoursesLoading = false;
+      coursesCountText = "failed to get data";
+      update();
+      showSnackBar(message: "something went wrong,check internet connection");
+    }
+  }
+
+  setRequestsCount() async {
+    try {
+      final repo = Get.find<ManagerHomeRepository>();
+      isRequestsLoading = true;
+      update();
+      requestCount = await repo.getRequestsCount();
+      isRequestsLoading = false;
+      requestsCountText = "$requestCount";
+      update();
+    } catch (exception) {
+      isRequestsLoading = false;
+      requestsCountText = "failed to get data";
       update();
       showSnackBar(message: "something went wrong,check internet connection");
     }
@@ -312,8 +398,28 @@ class ManagerHomeController extends GetxController {
     }
   }
 
+  pickBannerFile() async {
+    try {
+      bannerFilePickerResult = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'png', 'jpeg'],
+      );
+      bannerImageName = bannerFilePickerResult!.files.first.name;
+      update();
+      return bannerFilePickerResult;
+    } catch (error) {
+      //handle error;
+      print(error);
+    }
+  }
+
   updateAddCourseButtonStatues() {
     isCreateCourseButtonPressed = true;
+    update();
+  }
+
+  updateAddBannerButtonStatues() {
+    isCreateBannerButtonPressed = true;
     update();
   }
 
@@ -337,6 +443,7 @@ class ManagerHomeController extends GetxController {
       addingTrainingLoading = false;
       update();
       showSnackBar(
+          title: "success",
           message: "Training has been added successfully",
           backGroundColor: Colors.green);
     } catch (error) {
@@ -346,18 +453,45 @@ class ManagerHomeController extends GetxController {
       showSnackBar(message: "something went wrong");
     }
   }
-  // Future<int > getAdvisorsNumber() async {
-  //   QuerySnapshot<Map<String, dynamic>> snapshot =
-  //       await FirebaseFirestore.instance.collection('users').get();
-  //   for (var doc in snapshot.docs) {
-  //     Map<String, dynamic>? data = doc.data();
-  //     List<dynamic> roles = data['roles'];
-  //
-  //     if (roles.contains(Roles.advisor)) {
-  //       advisorCount++;
-  //     }
-  //   }
-  //
-  //   return advisorCount;
-  // }
+
+  storeBannerData() async {
+    try {
+      addingBannerLoading = true;
+      update();
+      final repo = Get.find<ManagerHomeRepository>();
+      await repo.storeBannerData();
+      addingBannerLoading = false;
+      update();
+      Get.back();
+      await Future.delayed(const Duration(milliseconds: 100));
+      showSnackBar(
+          title: "success",
+          message: "Banner has been added successfully",
+          backGroundColor: Colors.green);
+    } catch (error) {
+      print(error);
+      addingBannerLoading = false;
+      update();
+      showSnackBar(message: "something went wrong");
+    }
+  }
+  updateBannerData({required int index}) async {
+    try {
+      updatingBannerLoading = true;
+      update();
+      final repo = Get.find<ManagerHomeRepository>();
+      await repo.updateBannerData(index: index);
+      updatingBannerLoading = false;
+      update();
+      showSnackBar(
+          title: "success",
+          message: "Banner has been Updated successfully",
+          backGroundColor: Colors.green);
+    } catch (error) {
+      print(error);
+      updatingBannerLoading = false;
+      update();
+      showSnackBar(message: "something went wrong");
+    }
+  }
 }

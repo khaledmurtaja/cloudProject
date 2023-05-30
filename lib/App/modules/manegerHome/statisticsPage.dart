@@ -12,54 +12,59 @@ class StatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ManagerHomeController>();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: getMediaQueryHeight(context: context, value: 80),
-        ),
-        Text(
-          "Dashboard",
-          style: TextStyle(fontSize: 32.spMin, fontWeight: FontWeight.w600),
-        ),
-        Row(
+    return GetBuilder<ManagerHomeController>(
+      builder: (controller){
+        return        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DashBoardItemCard(
-              title: "Advisors",
-              value: controller.advisorCountText,
-              isLoading: controller.isAdvisorLoading,
+            SizedBox(
+              height: getMediaQueryHeight(context: context, value: 80),
+            ),
+            Text(
+              "Dashboard",
+              style: TextStyle(fontSize: 32.spMin, fontWeight: FontWeight.w600),
+            ),
+            Row(
+              children: [
+                DashBoardItemCard(
+                  title: "Advisors",
+                  value: controller.advisorCountText,
+                  isLoading: controller.isAdvisorLoading,
+                ),
+                SizedBox(
+                  width: getMediaQueryWidth(context: context, value: 24),
+                ),
+                DashBoardItemCard(
+                  title: "Trainees",
+                  value: controller.traineeCountText,
+                  isLoading: controller.isTraineeLoading,
+                ),
+              ],
             ),
             SizedBox(
-              width: getMediaQueryWidth(context: context, value: 24),
+              height: getMediaQueryHeight(context: context, value: 24),
             ),
-            DashBoardItemCard(
-              title: "Trainees",
-              value: controller.traineeCountText,
-              isLoading: controller.isTraineeLoading,
-            ),
+            Row(
+              children: [
+                DashBoardItemCard(
+                  title: "Courses",
+                  value: controller.coursesCountText,
+                  isLoading: controller.isCoursesLoading,
+                ),
+                SizedBox(
+                  width: getMediaQueryWidth(context: context, value: 24),
+                ),
+                DashBoardItemCard(
+                  title: "Requests",
+                  value: controller.requestsCountText,
+                  isLoading: controller.isRequestsLoading,
+                ),
+              ],
+            )
           ],
-        ),
-        SizedBox(
-          height: getMediaQueryHeight(context: context, value: 24),
-        ),
-        Row(
-          children: [
-            DashBoardItemCard(
-              title: "Courses",
-              value: "30",
-              isLoading: true,
-            ),
-            SizedBox(
-              width: getMediaQueryWidth(context: context, value: 24),
-            ),
-            DashBoardItemCard(
-              title: "Requests",
-              value: "90",
-              isLoading: true,
-            ),
-          ],
-        )
-      ],
+        );
+
+      },
     );
   }
 }

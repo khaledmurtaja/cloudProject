@@ -155,6 +155,7 @@ class LoginScreen extends GetView<LoginController> {
                                       .formKey.currentState!
                                       .validate();
                                   if (isFormValidated) {
+
                                     /// after signing in successfully
                                     await controller.login(
                                         id: controller.idController.text,

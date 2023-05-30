@@ -11,6 +11,8 @@ class LoginPageMiddleware extends GetMiddleware {
     String? role = "";
     AppSharedPref appSharedPref = Get.find<AppSharedPref>();
     role = await appSharedPref.getStringValue(key: "userrole");
+    print(role!+"kl");
+
     if (role == null || role == "") {
       return route;
     } else {

@@ -48,7 +48,7 @@ class TraineeHomeController extends GetxController {
 
       final List<Ad> allAds = querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return Ad(imageUrl: data['imageUrl'], name: data['name']);
+        return Ad(id:data['id'],imageUrl: data['imageUrl'], name: data['name']);
       }).toList();
 
       final random = Random();
