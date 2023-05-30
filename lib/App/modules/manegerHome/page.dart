@@ -108,7 +108,7 @@ class ManagerHomesScreen extends GetView<ManagerHomeController> {
                       text: 'Logout',
                       iconPath: ImagePaths.logoutIcon,
                       onTap: () {
-                        controller.onBannerSelected();
+                        controller.logout();
                       },
                     )
                   ],

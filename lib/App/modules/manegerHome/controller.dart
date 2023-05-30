@@ -10,8 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/core/values/enums.dart';
 import 'package:getx_architecture/core/values/roles.dart';
+import 'package:getx_architecture/routes/routes.dart';
 import '../../data/models/attendanceDate.dart';
 import '../../data/models/user.dart';
+import '../../data/services/sharedPrefService.dart';
 import 'advisorsPage.dart';
 import 'bannerPage.dart';
 import 'coursesPage.dart';
@@ -498,5 +500,12 @@ class ManagerHomeController extends GetxController {
       update();
       showSnackBar(message: "something went wrong");
     }
+  }
+  logout(){
+    final sharedPref = Get.find<AppSharedPref>();
+    sharedPref.deleteValue(key: "Uid");
+    sharedPref.deleteValue(key: "userrole");
+    Get.rootDelegate.offNamed(Routes.LOGIN);
+
   }
 }

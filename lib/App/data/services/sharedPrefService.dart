@@ -20,4 +20,7 @@ class AppSharedPref extends GetxService {
     String? value = await secureStorage.read(key: key);
     return value;
   }
+  deleteValue({required String key}) async {
+     await secureStorage.delete(key: key);
+  }
 }
