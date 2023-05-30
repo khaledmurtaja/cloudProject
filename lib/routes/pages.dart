@@ -26,8 +26,10 @@ import '../App/modules/review/requestReview.dart';
 import '../App/modules/traineeHome/binding.dart';
 import '../App/modules/trainingBooking/binding.dart';
 import '../App/modules/trainingBooking/page.dart';
-import '../App/modules/trainingDetails/binding.dart';
-import '../App/modules/trainingDetails/page.dart';
+import '../App/modules/trainingDetailsAfterRecording/binding.dart';
+import '../App/modules/trainingDetailsAfterRecording/page.dart';
+import '../App/modules/trainingDetailsBeforeRecording/binding.dart';
+import '../App/modules/trainingDetailsBeforeRecording/page.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -74,9 +76,14 @@ abstract class AppPages {
       binding: TraineeProfileBinding(),
     ),
     GetPage(
-      name: Routes.TRAINING_DETAILS,
-      page: () => TrainingDetaileScreen(),
-      binding: TrainingDetaileBinding(),
+      name: Routes.TRAINING_DETAILS_BEFORE_RECORDING,
+      page: () => TrainingDetaileBeforeRecordingScreen(),
+      binding: TrainingDetaileBeforeRecordingBinding(),
+    ),
+    GetPage(
+      name: Routes.TRAINING_DETAILS_AFTER_RECORDING,
+      page: () => TrainingDetaileAfterRecordingScreen(),
+      binding: TrainingDetaileAfterRecordingBinding(),
     ),
     GetPage(
       name: Routes.TRAINEE_HOME,

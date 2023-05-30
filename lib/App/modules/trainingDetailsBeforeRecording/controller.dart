@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../data/models/training.dart';
 import '../../data/models/user.dart';
 
-class TrainingDetaileController extends GetxController {
+class TrainingDetaileBeforeRecordingController extends GetxController {
   dynamic argumentData = Get.rootDelegate;
   Training? training;
 

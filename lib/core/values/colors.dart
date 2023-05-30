@@ -12,6 +12,9 @@ const Color descriptionColor = Color(0xff747D8C);
 const Color titleColor = Color(0xff293241);
 
 const Color cardColor = Color(0xffF6F6F6);
+const Color cardBackgroundColor = Color(0xffF5F5F5);
+const Color indicatorEnableColor = Color(0xff009FBD);
+const Color indicatorNotEnabledColor = Color(0xffD9D9D9);
 
 const Color clickHereColor = Color(0xff3330E4);
 const Color textFormFieldColor = Color(0xfff8f8f8);

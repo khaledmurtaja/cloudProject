@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/controller.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/advisorItem.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/customTabBar.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/fixedSideMenu.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/imageGradint.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/tabBarViewItem.dart';
-import 'package:getx_architecture/App/modules/trainingDetails/widgets/trainingTopDetails.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/controller.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/advisorItem.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/customTabBar.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/fixedSideMenu.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/imageGradint.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/tabBarViewItem.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsBeforeRecording/widgets/trainingTopDetails.dart';
 import 'package:getx_architecture/core/utils/helperFunctions.dart';
 
 import '../../../core/values/colors.dart';
 import '../../widgets/customAppBar.dart';
 
-class TrainingDetaileScreen extends GetView<TrainingDetaileController> {
-  const TrainingDetaileScreen({super.key});
+class TrainingDetaileBeforeRecordingScreen
+    extends GetView<TrainingDetaileBeforeRecordingController> {
+  const TrainingDetaileBeforeRecordingScreen({super.key});
 // GetBuilder<TrainingDetaileController>(
 //           builder: (newController) =>
   @override
@@ -51,7 +52,12 @@ class TrainingDetaileScreen extends GetView<TrainingDetaileController> {
                           children: [
                             const Expanded(
                               flex: 2,
-                              child: CustomTabBar(),
+                              child: CustomTabBar(
+                                text1: 'About Course',
+                                text2: 'Advisor',
+                                text3: 'Syllabus',
+                                text4: 'FQA',
+                              ),
                             ),
                             Expanded(
                               flex: 1,
@@ -78,7 +84,8 @@ class TrainingDetaileScreen extends GetView<TrainingDetaileController> {
                               height: 400,
                               child: TabBarView(
                                 children: [
-                                  TabBarViewItem(controller: controller),
+                                  TabBarViewItem(
+                                      training: controller.training!),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -101,8 +108,8 @@ class TrainingDetaileScreen extends GetView<TrainingDetaileController> {
                                       ),
                                     ],
                                   ),
-                                  TabBarViewItem(controller: controller),
-                                  TabBarViewItem(controller: controller),
+                                  TabBarViewItem(training: controller.training!),
+                                  TabBarViewItem(training: controller.training!),
                                 ],
                               ),
                             ),

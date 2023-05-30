@@ -15,13 +15,14 @@ class TrainingCard extends StatelessWidget {
     super.key,
     required this.training,
     required this.controller,
-    required this.imageHeight, required this.imageWidth,
+    required this.imageHeight,
+    required this.imageWidth,
   });
 
   final Training training;
   final TraineeHomeController controller;
   final int imageHeight;
-    final double imageWidth;
+  final double imageWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class TrainingCard extends StatelessWidget {
         Map<String, dynamic> parameter = {
           'trainingObject': training,
         };
-        Get.rootDelegate.toNamed(Routes.TRAINING_DETAILS, arguments: parameter);
+        Get.rootDelegate.toNamed(Routes.TRAINING_DETAILS_BEFORE_RECORDING,
+            arguments: parameter);
 
         // Get.toNamed('/trainingDetaile', arguments: [
         //   {'trainingObject': training}
@@ -140,13 +142,39 @@ class TrainingCard extends StatelessWidget {
                     const SizedBox(
                       width: 4,
                     ),
-                    Text(
-                      training.advisorName,
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.spMin,
-                        fontWeight: FontWeight.w400,
-                        color: trainingAdvisorNameColor,
+                    GestureDetector(
+                      onTap: () {
+                        final randomNumber = controller.generateRandomNumber();
+                        final percentage =
+                            controller.calculatePercentage(randomNumber);
+                        controller.showTrainerDetails(
+                            training.advisorId,controller);
+                        /*   Get.defaultDialog(
+                            content: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [Row()],
+                              ),
+                              flex: 1,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [],
+                              ),
+                              flex: 1,
+                            ),
+                          ],
+                        ));*/
+                      },
+                      child: Text(
+                        training.advisorName,
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontSize: 12.spMin,
+                          fontWeight: FontWeight.w400,
+                          color: trainingAdvisorNameColor,
+                        ),
                       ),
                     ),
                   ],

@@ -38,7 +38,7 @@ class _TrainingDatesDialogState extends State<TrainingDatesDialog> {
                   context,
                   widget.training,
                   selectedDate,
-                  widget.traineeHomeController.uId);
+                  widget.traineeHomeController.uId.value);
               widget.traineeHomeController.indicatorUpdate();
 
               Navigator.of(context).pop();

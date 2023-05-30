@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Training {
   final String id;
   final String name;
@@ -9,7 +10,7 @@ class Training {
   final String imageUrl;
   final String advisorName;
   final String advisorId;
-
+  final String advisorImgUrl;
   Training({
     required this.id,
     required this.name,
@@ -21,6 +22,7 @@ class Training {
     required this.imageUrl,
     required this.advisorName,
     required this.advisorId,
+    required this.advisorImgUrl,
   });
 
   factory Training.fromMap(Map<String, dynamic> data, String id) {
@@ -37,6 +39,7 @@ class Training {
       imageUrl: data['courseImageUrl'] ?? '',
       advisorName: data['advisorName'] ?? '',
       advisorId: data['advisorId'] ?? '',
+      advisorImgUrl: '',
     );
   }
 }

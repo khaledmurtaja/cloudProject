@@ -6,7 +6,15 @@ import '../../../../core/values/colors.dart';
 class CustomTabBar extends StatelessWidget {
   const CustomTabBar({
     super.key,
+    required this.text1,
+    required this.text2,
+    required this.text3,
+    required this.text4,
   });
+  final String text1;
+  final String text2;
+  final String text3;
+  final String text4;
 
   @override
   Widget build(BuildContext context) {
@@ -15,22 +23,20 @@ class CustomTabBar extends StatelessWidget {
       child: TabBar(
         labelColor: tabBarLabelColor,
         dividerColor: tabBarDividerColor,
-        labelStyle: TextStyle(
-            fontSize: 16.spMin,
-            fontWeight: FontWeight.w600),
+        labelStyle: TextStyle(fontSize: 16.spMin, fontWeight: FontWeight.w600),
         unselectedLabelColor: tabBarUnselectedLabelColor,
-        tabs: const [
+        tabs: [
           Tab(
-            text: 'About Course',
+            text: text1,
           ),
           Tab(
-            text: 'Advisor',
+            text: text2,
           ),
           Tab(
-            text: 'Syllabus',
+            text: text3,
           ),
           Tab(
-            text: 'FQA',
+            text: text4,
           )
         ], // list of tabs
       ),

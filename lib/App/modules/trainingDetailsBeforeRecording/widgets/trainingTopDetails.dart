@@ -15,7 +15,7 @@ class TrainingTopDetails extends StatelessWidget {
     required this.controller, required this.training,
   });
   final Training training;
-  final TrainingDetaileController controller;
+  final TrainingDetaileBeforeRecordingController controller;
 
   @override
   Widget build(BuildContext context) {

@@ -38,7 +38,7 @@ class TrainingBookingScreen extends GetView<TrainingBookingController> {
                     id: '',
                     imageUrl: document['courseImageUrl'],
                     advisorName: document['advisorName'],
-                              advisorId: document['advisorId']
+                              advisorId: document['advisorId'], advisorImgUrl: ''
 
                   ))
               .toList();

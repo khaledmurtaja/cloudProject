@@ -10,7 +10,7 @@ class AdvisorItem extends StatelessWidget {
     required this.controller,
   });
 
-  final TrainingDetaileController controller;
+  final TrainingDetaileBeforeRecordingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class AdvisorItem extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.only(left: 50),
               child: Column(
-                children: [
+                children: [  
                   Image.asset('assets/images/user/user1.png'),
                   const SizedBox(
                     height: 20,

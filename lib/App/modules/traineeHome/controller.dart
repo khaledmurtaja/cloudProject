@@ -9,7 +9,9 @@ import '../../data/models/ad.dart';
 import '../../data/models/training.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../../data/models/user.dart';
 import '../../data/services/sharedPrefService.dart';
+import 'widgets/trainerDialogDetails.dart';
 
 class TraineeHomeController extends GetxController {
   final RxInt balance = 0.obs;
@@ -28,7 +30,7 @@ class TraineeHomeController extends GetxController {
   static TraineeHomeController get to => Get.find();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final sharedPref = Get.find<AppSharedPref>();
-  String uId = '';
+  var uId = ''.obs;
   String category = '';
 
   // Future<void> trackUserActivity(String activity) async {
@@ -42,17 +44,25 @@ class TraineeHomeController extends GetxController {
   void onInit() async {
     super.onInit();
     // await fetchTraineeData();
-    await getUid().then((value) {
+    await getUid().then((_) async {
+      // print('uId');
+      // print(uId);
       fetchAds();
-      fetchRecommendedTrainings(category, uId);
-      fetchNewTrainingsTrainings(uId);
+      await fetchRecommendedTrainings(category, uId.value);
+      await fetchNewTrainingsTrainings(uId.value);
     });
   }
 
+  // await sharedPref.getStringValue(key: 'Uid') ??
   Future<void> getUid() async {
-    // await sharedPref.getStringValue(key: 'Uid') ??
-    uId = '3Q3UOvGDz2ouzXTtOAs2';
-    await getUserCategoryValue(uId);
+    String? uidValue;
+    uidValue = await sharedPref.getStringValue(key: 'Uid');
+    // print('ooooooo');
+    // print(uidValue);
+    uId.value = uidValue ?? '';
+    // uId.value = 'SPEmTvvaP3Sxo2bO4TTSSU1fUsI2';
+
+    await getUserCategoryValue(uId.value);
     update();
   }
 
@@ -68,17 +78,15 @@ class TraineeHomeController extends GetxController {
         category = data['field'];
         update();
       } else {
-        // Document doesn't exist
         print('User document does not exist');
       }
     } catch (e) {
-      // Error occurred while retrieving the document
       print('Error getting user document: $e');
     }
   }
+  // await trackUserActivity('fetchAds');
 
   void fetchAds() async {
-    // await trackUserActivity('fetchAds');
     try {
       final querySnapshot =
           await FirebaseFirestore.instance.collection('ads').get();
@@ -102,17 +110,17 @@ class TraineeHomeController extends GetxController {
       print('Error fetching ads: $e');
     }
   }
+  // final userId = '3Q3UOvGDz2ouzXTtOAs2';
 
   Future<void> fetchRecommendedTrainings(String category, String userId) async {
     try {
-      // final userId = '3Q3UOvGDz2ouzXTtOAs2';
-
       final userSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .get();
       List<dynamic> registeredTrainingIds =
           userSnapshot.data()!['selected_training_ids'] ?? [];
+
       final snapshot = registeredTrainingIds.isEmpty
           ? await trainingsCollection
               .where('category', isEqualTo: category)
@@ -134,6 +142,7 @@ class TraineeHomeController extends GetxController {
           imageUrl: document['courseImageUrl'],
           advisorName: document['advisorName'],
           advisorId: document['advisorId'],
+          advisorImgUrl: '',
         );
       }).toList();
 
@@ -156,15 +165,12 @@ class TraineeHomeController extends GetxController {
           traineeSnapshot.data().toString().contains('selected_training_ids')
               ? traineeSnapshot.data()!['selected_training_ids']
               : [];
-
       final snapshot = registeredTrainingIds.isEmpty
           ? await trainingsCollection.get()
           : await trainingsCollection
               .where(FieldPath.documentId, whereNotIn: registeredTrainingIds)
               .get();
-
       final List<Training> fetchedTrainings = snapshot.docs.map((document) {
-        // print(document.id);
         return Training(
             name: document['trainingName'],
             description: document['description'],
@@ -175,14 +181,14 @@ class TraineeHomeController extends GetxController {
             id: document.id,
             imageUrl: document['courseImageUrl'],
             advisorName: document['advisorName'],
-            advisorId: document['advisorId']);
+            advisorId: document['advisorId'],
+            advisorImgUrl: '');
       }).toList();
-      // print(fetchedTrainings.length);
+
       newTrainings.assignAll(fetchedTrainings);
       update();
     } catch (error) {
       print("error hhh $error");
-      // Handle error
     } finally {
       isLoadingNewTrainings.value = false;
     }
@@ -219,10 +225,8 @@ class TraineeHomeController extends GetxController {
         .then((querySnapshot) {
       if (querySnapshot.docs.isNotEmpty) {
         bool hasConflict = false;
-
         for (var doc in querySnapshot.docs) {
           List<dynamic> dates = doc.data()['dates'];
-
           for (var date in dates) {
             if (checkConflict(selectedDate, date)) {
               hasConflict = true;
@@ -233,7 +237,6 @@ class TraineeHomeController extends GetxController {
             break;
           }
         }
-
         if (hasConflict) {
           Get.snackbar(
             'An error occurred!',
@@ -254,20 +257,15 @@ class TraineeHomeController extends GetxController {
               if (userSnapshot.data()!.containsKey('balance')) {
                 traineeBalance = double.parse(userSnapshot.data()!['balance']);
               } else {}
-
-              // double traineeBalance = double.parse($group1);
-              // userSnapshot.data()!['balance'] ?? 0.0;
-
               if (traineeBalance >= training.price) {
                 double updatedBalance = traineeBalance - training.price;
-
                 FirebaseFirestore.instance
                     .collection('users')
                     .doc(userId)
                     .update({
                   'balance': updatedBalance.toString(),
                 }).then((_) {
-                  saveTrainingData(context, training, selectedDate, uId);
+                  saveTrainingData(context, training, selectedDate, uId.value);
                 }).catchError((error) {
                   Get.snackbar(
                     'An error occurred!',
@@ -290,7 +288,6 @@ class TraineeHomeController extends GetxController {
               }
             }).catchError((error) {
               print('object $error');
-
               Get.snackbar(
                 'An error occurred!',
                 'Failed to retrieve trainee data',
@@ -301,14 +298,11 @@ class TraineeHomeController extends GetxController {
               );
             });
           } else {
-            saveTrainingData(context, training, selectedDate, uId);
+            saveTrainingData(context, training, selectedDate, uId.value);
           }
         }
       } else {
-        saveTrainingData(context, training, selectedDate, uId);
-
-        // The collection "selected_training_ids_times" does not exist for the user
-        // Handle this case accordingly
+        saveTrainingData(context, training, selectedDate, uId.value);
       }
     }).catchError((error) {
       print('object $error');
@@ -363,8 +357,8 @@ class TraineeHomeController extends GetxController {
         isLoadingNewTrainings.value = true;
 
         isLoadingRecommendedTrainings.value = true;
-        fetchNewTrainingsTrainings(uId);
-        fetchRecommendedTrainings('FrontEnd', uId);
+        fetchNewTrainingsTrainings(uId.value);
+        fetchRecommendedTrainings(category, uId.value);
         Get.snackbar(
           'The operation succeeded !',
           "Training recorded successfully",
@@ -422,6 +416,37 @@ class TraineeHomeController extends GetxController {
     }).catchError((error) {
       print('Error updating balance: $error');
     });
+  }
+
+  void showTrainerDetails(String trainerId  ,TraineeHomeController traineeHomeController) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: trainerId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot trainerSnapshot = querySnapshot.docs.first;
+      SystemUser trainer =
+          SystemUser.fromJson(trainerSnapshot.data() as Map<String, dynamic>);
+
+      Get.defaultDialog(
+          title: '',
+          content: TrainerDialogDetails(
+            trainerData: trainer, traineeHomeController: traineeHomeController, 
+          ));
+    } else {
+      // Trainer not found
+      print('Trainer not found');
+    }
+  }
+
+  int generateRandomNumber() {
+    final random = Random();
+    return random.nextInt(101);
+  }
+
+  double calculatePercentage(int number) {
+    return number / 100;
   }
 }
 

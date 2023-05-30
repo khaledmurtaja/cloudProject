@@ -7,7 +7,9 @@
         {
             "name": "cloudProject-1",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--web-port", "5050"]
+
         },
         {
             "name": "cloudProject-1 (profile mode)",

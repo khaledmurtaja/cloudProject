@@ -10,7 +10,7 @@ class ImageGradint extends StatelessWidget {
     required this.controller,
   });
 
-  final TrainingDetaileController controller;
+  final TrainingDetaileBeforeRecordingController controller;
 
   @override
   Widget build(BuildContext context) {
