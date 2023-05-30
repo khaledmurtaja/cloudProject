@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/errors/exceptions.dart';
 import '../../../core/values/email_service_consts.dart';
 import '../../../core/values/roles.dart';
+import '../../data/models/ad.dart';
 import '../../data/models/trainings.dart';
 import '../../data/models/user.dart';
 import 'package:image/image.dart' as img;
@@ -15,6 +16,8 @@ class ManagerHomeRepository {
   final collection = Get.find<CollectionReference>(tag: "users");
   int advisorNumber = 0;
   int traineeNumber = 0;
+  int coursesNumber = 0;
+  int requestsNumber = 0;
 
   Future<void> updateIdField(
       {required String uid, required String newId}) async {
@@ -90,6 +93,34 @@ class ManagerHomeRepository {
     }
   }
 
+  Future<int> getCoursesCount() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('trainings')
+          .get();
+      coursesNumber = snapshot.size;
+      return coursesNumber;
+    } catch (exception) {
+      throw UnKnowException();
+    }
+  }
+
+  Future<int> getRequestsCount() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('users').where('id',isEqualTo: "").get();
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic>? data = doc.data();
+        requestsNumber++;
+      }
+
+      return requestsNumber;
+    } catch (exception) {
+      throw UnKnowException();
+    }
+  }
+
   Future<List<SystemUser>> getUsers(
       {required String category, required String role}) async {
     try {
@@ -98,11 +129,25 @@ class ManagerHomeRepository {
           .where('field', isEqualTo: category)
           .where('role', isEqualTo: role)
           .get();
-      print(role);
       final List<SystemUser> advisors = querySnapshot.docs
           .map((doc) => SystemUser.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
       return advisors;
+    } catch (e) {
+      print('Error getting advisors: $e');
+      return [];
+    }
+  }
+  Future<List<Ad>> getBanners(
+      ) async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('ads')
+          .get();
+      final List<Ad> ads = querySnapshot.docs
+          .map((doc) => Ad(imageUrl: doc['imageUrl'], name: doc['name'],id: doc['id']))
+          .toList();
+      return ads;
     } catch (e) {
       print('Error getting advisors: $e');
       return [];
@@ -118,7 +163,7 @@ class ManagerHomeRepository {
     trainings
         .add(Training(
                 trainingName: controller.courseName.text,
-                trainingId:trainings.doc().id ,
+                trainingId: trainings.doc().id,
                 category: controller.courseCategory,
                 description: controller.courseDescription.text,
                 dates: controller.attendanceDates,
@@ -131,6 +176,49 @@ class ManagerHomeRepository {
         .then((value) {})
         .catchError((error) {});
   }
+  storeBannerData() async {
+    final controller = Get.find<ManagerHomeController>();
+    final bytes = controller.bannerFilePickerResult!.files.first.bytes;
+    controller.bannerImageUrl = await _uploadCourseImage(bytes: bytes);
+    CollectionReference ads =
+    FirebaseFirestore.instance.collection('ads');
+    String id=ads.doc().id;
+    ads
+        .add(
+      {
+        'name':controller.bannerName.text,
+        'imageUrl':controller.bannerImageUrl,
+        'id':id
+      }
+        )
+        .then((value) {
+          controller.banners.add(Ad(id:id,imageUrl: controller.bannerImageUrl, name: controller.bannerName.text));
+    })
+        .catchError((error) {});
+  }
+  updateBannerData({required int index}) async {
+    final controller = Get.find<ManagerHomeController>();
+    final bytes = controller.bannerFilePickerResult!.files.first.bytes;
+    controller.bannerImageUrl = await _uploadCourseImage(bytes: bytes);
+    CollectionReference ads = FirebaseFirestore.instance.collection('ads');
+
+    // Assuming the field to match is "id" and the desired value is 123
+    QuerySnapshot querySnapshot = await ads.where('id', isEqualTo: controller.banners[index].id).get();
+
+    if (querySnapshot.size > 0) {
+      String documentId = querySnapshot.docs.first.id;
+
+      ads.doc(documentId).update({
+        'name': controller.bannerUpdatedName.text,
+        'imageUrl': controller.bannerImageUrl,
+      }).then((_) {
+        // Update successful
+      }).catchError((error) {
+        // Error handling
+      });
+    }
+  }
+
 
   _uploadCourseImage({dynamic bytes}) async {
     try {

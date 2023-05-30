@@ -13,7 +13,7 @@ class AppSharedPref extends GetxService {
   /// for setting string values in the storage.
   putStringValue({required String key, required String value}) async {
     await secureStorage.write(key: key, value: value);
-    // print(value);
+    print(value);
     // print("wrote success");
   }
 
@@ -24,5 +24,9 @@ class AppSharedPref extends GetxService {
     print(value);
     print('object done');
     return value;
+  }
+
+  deleteValue({required String key}) async {
+    await secureStorage.delete(key: key);
   }
 }

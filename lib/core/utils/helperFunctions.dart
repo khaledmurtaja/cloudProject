@@ -92,7 +92,18 @@ String? validateCourseNameField(String name) {
   if (name.isEmpty) {
     return courseNameIsRequiredMessage;
   } else if (name.length < 4 || name.length > 30) {
-    return courseNameMustHave4LettersAtLeastMessage;
+    return "courseNameMustHave4LettersAtLeastMessage";
+  } else if (name.length > 30) {
+    return nameMustHave30LettersAtMostMessage;
+  } else {
+    return null;
+  }
+}
+String? validateBannerNameField(String name) {
+  if (name.isEmpty) {
+    return "banner name is required";
+  } else if (name.length < 4 || name.length > 30) {
+    return "banner name must have at least 4 characters.";
   } else if (name.length > 30) {
     return nameMustHave30LettersAtMostMessage;
   } else {

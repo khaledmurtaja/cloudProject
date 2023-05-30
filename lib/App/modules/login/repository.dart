@@ -44,6 +44,7 @@ class LoginRepository {
     if (value.docs.isNotEmpty) {
       final email = value.docs.first.get("email");
       controller.role = value.docs.first.get("role");
+      print(controller.role+"يبي");
       if (email != null) {
         return email;
       }
