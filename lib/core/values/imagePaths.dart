@@ -12,6 +12,7 @@ class ImagePaths{
   static const String advisorGreyIcon="images/advisorGrey.svg";
   static const String categoryGreyIcon="images/bookGrey.svg";
   static const String blackRequestsIcon="images/requestBlack.svg";
+  static const String logoutIcon="assets/images/logoutcurve.svg";
 
 
 

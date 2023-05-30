@@ -99,6 +99,17 @@ class ManagerHomesScreen extends GetView<ManagerHomeController> {
                       onTap: () {
                         controller.onBannerSelected();
                       },
+                    ),
+                    SizedBox(
+                      height: getMediaQueryHeight(context: context, value: 100),
+                    ),
+                    DrawerItem(
+                      isPointerShown: false,
+                      text: 'Logout',
+                      iconPath: ImagePaths.logoutIcon,
+                      onTap: () {
+                        controller.onBannerSelected();
+                      },
                     )
                   ],
                 ),

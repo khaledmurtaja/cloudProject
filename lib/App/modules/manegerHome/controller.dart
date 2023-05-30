@@ -222,6 +222,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
+    isBannerSelected = true;
     currentPageIndex = 0;
     update();
   }
@@ -232,6 +233,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
+    isBannerSelected = true;
     currentPageIndex = 1;
     update();
   }
@@ -242,6 +244,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = true;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
+    isBannerSelected = true;
     currentPageIndex = 2;
     update();
   }
@@ -252,6 +255,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = true;
     isAdvisorsSelected = false;
+    isBannerSelected = true;
     currentPageIndex = 3;
     update();
   }
@@ -262,6 +266,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = false;
     isAdvisorsSelected = true;
+    isBannerSelected=false;
     currentPageIndex = 4;
     update();
   }
