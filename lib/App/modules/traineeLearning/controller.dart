@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/training.dart';
+import '../../data/models/user.dart';
+import '../../widgets/trainerDialogDetails.dart';
 
 class TraineeLearninController extends GetxController {
   dynamic argumentData = Get.rootDelegate;
@@ -38,7 +40,7 @@ class TraineeLearninController extends GetxController {
         id: doc.id,
         name: data['trainingName'],
         description: data['description'],
-        advisorId: '',
+        advisorId: data['advisorId'],
         advisorName: data['advisorName'],
         category: '',
         dates: [],
@@ -77,6 +79,30 @@ class TraineeLearninController extends GetxController {
       return userImgUrl;
     } else {
       return '';
+    }
+  }
+
+  void showTrainerDetails(
+    String trainerId,
+  ) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: trainerId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot trainerSnapshot = querySnapshot.docs.first;
+      SystemUser trainer =
+          SystemUser.fromJson(trainerSnapshot.data() as Map<String, dynamic>);
+
+      Get.defaultDialog(
+          title: '',
+          content: TrainerDialogDetails(
+            trainerData: trainer, withCommunicate: true,
+          ));
+    } else {
+      // Trainer not found
+      print('Trainer not found');
     }
   }
 }

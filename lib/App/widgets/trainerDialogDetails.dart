@@ -7,43 +7,40 @@ import 'package:get/get.dart';
 import 'package:image_network/image_network.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import '../../../../core/utils/helperFunctions.dart';
-import '../../../../core/values/colors.dart';
-import '../../../data/models/user.dart';
-import '../../traineeLearning/controller.dart';
-import '../controller.dart';
+import '../../core/utils/helperFunctions.dart';
+import '../../core/values/colors.dart';
+import '../data/models/user.dart';
+import '../modules/traineeHome/controller.dart';
+import '../modules/traineeLearning/controller.dart';
+import 'customButton.dart';
 
 class TrainerDialogDetails extends StatelessWidget {
-  const TrainerDialogDetails({
+  final SystemUser trainerData;
+  final bool withCommunicate;
+  TrainerDialogDetails({
     Key? key,
     required this.trainerData,
-    required this.traineeHomeController,
+    required this.withCommunicate,
   }) : super(key: key);
-  final SystemUser trainerData;
-  final TraineeHomeController traineeHomeController;
   @override
   Widget build(BuildContext context) {
-    final dealRandomNumber = traineeHomeController.generateRandomNumber();
-    final dealPercentage =
-        traineeHomeController.calculatePercentage(dealRandomNumber);
-    final conversationRandomNumber =
-        traineeHomeController.generateRandomNumber();
+    final dealRandomNumber = generateRandomNumber();
+    final dealPercentage = calculatePercentage(dealRandomNumber);
+    final conversationRandomNumber = generateRandomNumber();
     final conversationPercentage =
-        traineeHomeController.calculatePercentage(conversationRandomNumber);
-    final timeManagementRandomNumber =
-        traineeHomeController.generateRandomNumber();
+        calculatePercentage(conversationRandomNumber);
+    final timeManagementRandomNumber = generateRandomNumber();
     final timeManagementPercentage =
-        traineeHomeController.calculatePercentage(timeManagementRandomNumber);
-    final leadershipRandomNumber = traineeHomeController.generateRandomNumber();
-    final leadershipPercentage =
-        traineeHomeController.calculatePercentage(leadershipRandomNumber);
-    final cooperationRandomNumber =
-        traineeHomeController.generateRandomNumber();
-    final cooperationPercentage =
-        traineeHomeController.calculatePercentage(cooperationRandomNumber);
+        calculatePercentage(timeManagementRandomNumber);
+    final leadershipRandomNumber = generateRandomNumber();
+    final leadershipPercentage = calculatePercentage(leadershipRandomNumber);
+    final cooperationRandomNumber = generateRandomNumber();
+    final cooperationPercentage = calculatePercentage(cooperationRandomNumber);
     return SizedBox(
         width: getMediaQueryWidth(context: context, value: 700),
-        height: getMediaQueryHeight(context: context, value: 550),
+        height: withCommunicate
+            ? getMediaQueryHeight(context: context, value: 650)
+            : getMediaQueryHeight(context: context, value: 550),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -82,7 +79,7 @@ class TrainerDialogDetails extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              width: getMediaQueryHeight(
+                              height: getMediaQueryHeight(
                                   context: context, value: 15),
                             ),
                             Text(
@@ -109,7 +106,7 @@ class TrainerDialogDetails extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: getMediaQueryHeight(context: context, value: 8),
+                      height: getMediaQueryHeight(context: context, value: 8),
                     ),
                     Text(
                       '${trainerData.name} ipsum dolor sit amet\nconsectetur. Lorem in sagittis et\nlibero pretium congue vel\nbibendum.\nIpsum viverra nunc elementum\ntincidunt non.\nId fermentum aenean dictum\nmalesuada neque enim eu.\nFacilisis tincidunt sed eugiat.\nIn adipiscing sed enim ac nulla.\nEnim rhoncus quis odio\nquamimperdiet id nisi facilisis dui.\nOdio sapien nullam ac\n aliquam in scelerisque.',
@@ -118,6 +115,20 @@ class TrainerDialogDetails extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    !withCommunicate
+                        ? Container()
+                        : SizedBox(
+                            height: getMediaQueryHeight(
+                                context: context, value: 24),
+                          ),
+                    !withCommunicate
+                        ? Container()
+                        : CustomButton(
+                            onPressed: () {},
+                            text: 'Connect with him',
+                            width: getMediaQueryWidth(
+                                context: context, value: 300),
+                          )
                   ],
                 ),
                 flex: 1,

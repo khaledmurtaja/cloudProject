@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -88,6 +91,7 @@ String? validateNameField(String name) {
     return null;
   }
 }
+
 String? validateCourseNameField(String name) {
   if (name.isEmpty) {
     return courseNameIsRequiredMessage;
@@ -99,6 +103,7 @@ String? validateCourseNameField(String name) {
     return null;
   }
 }
+
 String? validateBannerNameField(String name) {
   if (name.isEmpty) {
     return "banner name is required";
@@ -150,21 +155,40 @@ String? validateDropDown(String? value) {
     return null;
   }
 }
+
 String? validateDescription(String description) {
   if (description.length > 3000) {
     return lessThat200CharRequiredMessage;
-  }else if(description.isEmpty){
+  } else if (description.isEmpty) {
     return "Description can't be empty";
-
   } else {
     return null;
   }
 }
-String? validateCoursePrice(String price){
-  if(!price.isNumericOnly){
+
+String? validateCoursePrice(String price) {
+  if (!price.isNumericOnly) {
     return "only numbers allowed here";
-  }else{
+  } else {
     return null;
   }
+}
 
+int generateRandomNumber() {
+  final random = Random();
+  return random.nextInt(101);
+}
+
+double calculatePercentage(int number) {
+  return number / 100;
+}
+
+Future<void> trackUserActivity(
+    {required String activity, required String title}) async {
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  await analytics.logEvent(
+    name: title,
+    parameters: {'activity': activity},
+  );
 }

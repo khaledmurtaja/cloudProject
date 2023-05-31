@@ -51,7 +51,7 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
                 Get.rootDelegate.toNamed(
                   Routes.TRAINEE_LEARNING,
                   arguments: {
-                    'uId': controller.uId,
+                    'uId': controller.uId.value,
                   },
                 );
               }
@@ -61,7 +61,12 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
           NavBarItem(
             text: "My profile",
             onTap: () {
-              Get.toNamed('/traineeProfile');
+              Get.rootDelegate.toNamed(
+                Routes.TRAINEE_PROFILE,
+                arguments: {
+                  'uId': controller.uId.value,
+                },
+              );
             },
           ),
         ],
@@ -127,8 +132,7 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
                       height: 350,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 120),
-                        child: 
-                        controller.recommendedTrainings.isEmpty
+                        child: controller.recommendedTrainings.isEmpty
                             ? Center(
                                 child: Text(
                                   'New Trainings will be available soon!',
@@ -138,8 +142,7 @@ class TraineeHomeScreen extends GetView<TraineeHomeController> {
                                       fontSize: 24.spMin),
                                 ),
                               )
-                            : 
-                            ListView.separated(
+                            : ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: min(
                                     controller.recommendedTrainings.length, 4),

@@ -54,7 +54,9 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   image: ^4.0.17
   percent_indicator: ^4.2.3
-  
+  flutter_dropzone: ^3.0.5
+  flutter_stripe: ^9.2.0
+
 
 
 dev_dependencies:

@@ -21,7 +21,7 @@ class RegisterController extends GetxController {
   bool isLoading = false;
   String fileName = "choose file";
   UserCredential? userCredential;
-  bool isRegisterButtonPressed=false;
+  bool isRegisterButtonPressed = false;
   List<String> role = ["Trainee", "Advisor"];
   List<String> professions = [
     "DataBase",
@@ -37,8 +37,9 @@ class RegisterController extends GetxController {
     securePassword = !securePassword;
     update();
   }
-  updateRegisterButtonStatues(){
-    isRegisterButtonPressed=true;
+
+  updateRegisterButtonStatues() {
+    isRegisterButtonPressed = true;
     update();
   }
 
@@ -46,7 +47,7 @@ class RegisterController extends GetxController {
     try {
       filePickerResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg','png'],
+        allowedExtensions: ['jpg', 'png'],
       );
       fileName = filePickerResult!.files.first.name;
       update();
@@ -73,7 +74,13 @@ class RegisterController extends GetxController {
       await repo.registerUser(email: email, password: password);
       isLoading = false;
       update();
-      showSnackBar(message: "We will send you an email soon",title: "Request has been sent");
+      await trackUserActivity(
+          activity: 'Registration request',
+          title: 'Site registration requests');
+
+      showSnackBar(
+          message: "We will send you an email soon",
+          title: "Request has been sent");
     } catch (e) {
       if (e is EmailAlreadyInUseException) {
         showSnackBar(

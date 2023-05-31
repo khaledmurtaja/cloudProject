@@ -144,11 +144,9 @@ class TrainingCard extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        final randomNumber = controller.generateRandomNumber();
-                        final percentage =
-                            controller.calculatePercentage(randomNumber);
                         controller.showTrainerDetails(
-                            training.advisorId,controller);
+                          training.advisorId,
+                        );
                         /*   Get.defaultDialog(
                             content: Row(
                           children: [

@@ -117,13 +117,12 @@ class ManagerHomesScreen extends GetView<ManagerHomeController> {
             },
           ),
           GetBuilder<ManagerHomeController>(
-            builder: (controller){
+            builder: (controller) {
               return Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      left: getMediaQueryWidth(context: context, value: 40)),
-                  child: controller.pages[controller.currentPageIndex]
-                ),
+                    padding: EdgeInsets.only(
+                        left: getMediaQueryWidth(context: context, value: 40)),
+                    child: controller.pages[controller.currentPageIndex]),
               );
             },
           )

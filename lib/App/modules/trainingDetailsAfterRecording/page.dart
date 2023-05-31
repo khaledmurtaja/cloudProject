@@ -1,12 +1,16 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:getx_architecture/App/modules/trainingDetailsAfterRecording/widgets/assignmentsItemDetails.dart';
 import 'package:getx_architecture/App/modules/trainingDetailsAfterRecording/widgets/sideCard.dart';
 import 'package:getx_architecture/core/utils/helperFunctions.dart';
 import 'package:getx_architecture/core/values/colors.dart';
 
 import '../../widgets/customAppBar.dart';
+import '../../widgets/customButton.dart';
 import '../trainingDetailsBeforeRecording/widgets/customTabBar.dart';
 import '../trainingDetailsBeforeRecording/widgets/tabBarViewItem.dart';
 import 'controller.dart';
@@ -71,8 +75,8 @@ class TrainingDetaileAfterRecordingScreen
                                       context: context, value: 500),
                                   child: const CustomTabBar(
                                     text1: 'About',
-                                    text2: 'Details',
-                                    text3: 'Assignments',
+                                    text2: 'Assignments',
+                                    text3: 'Details',
                                     text4: 'Resources',
                                   ),
                                 ),
@@ -87,23 +91,9 @@ class TrainingDetaileAfterRecordingScreen
                                     children: [
                                       TabBarViewItem(
                                           training: controller.training!),
+                                      AssignmentsItemDetails(controller: controller, ),
                                       TabBarViewItem(
                                           training: controller.training!),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            'Assignments',
-                                            style: TextStyle(
-                                                fontSize: 35.spMin,
-                                                fontWeight: FontWeight.w600,
-                                                color: titleColor),
-                                          ),
-                                          SizedBox(
-                                            height: getMediaQueryHeight(
-                                                context: context, value: 20),
-                                          ),
-                                        ],
-                                      ),
                                       TabBarViewItem(
                                           training: controller.training!),
                                     ],
@@ -186,3 +176,4 @@ class TrainingDetaileAfterRecordingScreen
     );
   }
 }
+

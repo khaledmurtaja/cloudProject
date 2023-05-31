@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_architecture/App/modules/traineeHome/widgets/trainingDatesDialog.dart';
 
+import '../../../core/utils/helperFunctions.dart';
 import '../../data/models/ad.dart';
 import '../../data/models/training.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../../data/models/user.dart';
 import '../../data/services/sharedPrefService.dart';
-import 'widgets/trainerDialogDetails.dart';
+import '../../widgets/trainerDialogDetails.dart';
 
 class TraineeHomeController extends GetxController {
   final RxInt balance = 0.obs;
@@ -28,17 +29,9 @@ class TraineeHomeController extends GetxController {
       FirebaseFirestore.instance.collection('trainings');
 
   static TraineeHomeController get to => Get.find();
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final sharedPref = Get.find<AppSharedPref>();
   var uId = ''.obs;
   String category = '';
-
-  // Future<void> trackUserActivity(String activity) async {
-  //   await analytics.logEvent(
-  //     name: 'hhhhhhh',
-  //     parameters: {'activity': activity},
-  //   );
-  // }
 
   @override
   void onInit() async {
@@ -93,7 +86,8 @@ class TraineeHomeController extends GetxController {
 
       final List<Ad> allAds = querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return Ad(id:data['id'],imageUrl: data['imageUrl'], name: data['name']);
+        return Ad(
+            id: data['id'], imageUrl: data['imageUrl'], name: data['name']);
       }).toList();
 
       final random = Random();
@@ -351,7 +345,11 @@ class TraineeHomeController extends GetxController {
           .doc(training.id)
           .set({
         'dates': [selectedDate],
-      }).then((_) {
+      }).then((_) async {
+        await trackUserActivity(
+            activity: 'Training recording',
+            title: 'Training recording by the trainee');
+
         recommendedTrainings.clear();
         newTrainings.clear();
         isLoadingNewTrainings.value = true;
@@ -418,7 +416,7 @@ class TraineeHomeController extends GetxController {
     });
   }
 
-  void showTrainerDetails(String trainerId  ,TraineeHomeController traineeHomeController) async {
+  void showTrainerDetails(String trainerId) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .where('id', isEqualTo: trainerId)
@@ -432,21 +430,13 @@ class TraineeHomeController extends GetxController {
       Get.defaultDialog(
           title: '',
           content: TrainerDialogDetails(
-            trainerData: trainer, traineeHomeController: traineeHomeController, 
+            trainerData: trainer,
+            withCommunicate: false,
           ));
     } else {
       // Trainer not found
       print('Trainer not found');
     }
-  }
-
-  int generateRandomNumber() {
-    final random = Random();
-    return random.nextInt(101);
-  }
-
-  double calculatePercentage(int number) {
-    return number / 100;
   }
 }
 

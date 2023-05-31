@@ -38,7 +38,9 @@ class RegisterRepository {
   _storeUserData() async {
     final bytes = controller.filePickerResult!.files.first.bytes;
     String url = await _uploadImage(bytes: bytes);
-    DocumentReference users = FirebaseFirestore.instance.collection('users').doc(controller.userCredential!.user!.uid);
+    DocumentReference users = FirebaseFirestore.instance
+        .collection('users')
+        .doc(controller.userCredential!.user!.uid);
     users
         .set(SystemUser(
             name: controller.nameController.text,

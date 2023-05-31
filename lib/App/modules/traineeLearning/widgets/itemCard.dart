@@ -106,13 +106,20 @@ class ItemCard extends StatelessWidget {
                   const SizedBox(
                     width: 4,
                   ),
-                  Text(
-                    controller.myLearnings[index].advisorName,
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      fontSize: 12.spMin,
-                      fontWeight: FontWeight.w400,
-                      color: trainingAdvisorNameColor,
+                  GestureDetector(
+                    onTap: () {
+                      controller.showTrainerDetails(
+                        controller.myLearnings[index].advisorId
+                      );
+                    },
+                    child: Text(
+                      controller.myLearnings[index].advisorName,
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        fontSize: 12.spMin,
+                        fontWeight: FontWeight.w400,
+                        color: trainingAdvisorNameColor,
+                      ),
                     ),
                   ),
                   SizedBox(
