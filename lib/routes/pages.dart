@@ -10,6 +10,7 @@ import 'package:getx_architecture/routes/routes.dart';
 
 import '../App/modules/AddTraining/page.dart';
 import '../App/modules/advisorHome/advisorHomeScreen.dart';
+import '../App/modules/advisorHome/binding.dart';
 import '../App/modules/advisorTrainees/binding.dart';
 import '../App/modules/advisorTrainees/page.dart';
 import '../App/modules/allTrainings/binding.dart';
@@ -45,7 +46,7 @@ abstract class AppPages {
         page: () => RegisterScreen(),
         binding: RegisterBinding()),
     GetPage(name: Routes.REVIEW, page: () => const ReviewScreen()),
-    GetPage(name: Routes.ADVISOR_HOME, page: () => const AdvisorHomesScreen()),
+    GetPage(name: Routes.ADVISOR_HOME, page: () => const AdvisorHomesScreen(),binding: AdvisorHomeBinding()),
     GetPage(
         name: Routes.MANEGER_HOME,
         page: () => const ManagerHomesScreen(),

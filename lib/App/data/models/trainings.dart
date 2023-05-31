@@ -25,12 +25,12 @@ class Training {
     required this.isPaidCourse
   });
 
-  Training.fromJson(Map<dynamic, dynamic> json) {
-    trainingName = json['name'];
+  Training.fromJson(Map<String, dynamic> json) {
+    trainingName = json['trainingName'];
     trainingId=json['trainingId'];
     category = json['category'];
     description = json['description'];
-    dates=json['dates'];
+    dates = (json['dates'] as List<dynamic>).map((date) => AttendanceDate.fromJson(date)).toList();
     advisorId=json['advisorId'];
     advisorName=json['advisorName'];
     courseImageUrl=json['courseImageUrl'];

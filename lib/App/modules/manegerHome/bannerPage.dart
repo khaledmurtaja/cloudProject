@@ -111,6 +111,8 @@ class BannerPage extends StatelessWidget {
                               Center(
                                   child: CustomButton(
                                 onPressed: () {
+                                  Get.defaultDialog(
+                                  );
                                   controller.bannerUpdatedName.text=controller.banners[index].name;
                                   showDialog(
                                       context: context,
