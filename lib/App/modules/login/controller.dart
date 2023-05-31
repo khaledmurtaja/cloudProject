@@ -36,7 +36,7 @@ class LoginController extends GetxController {
     }
   }
 
-  _routeTo({required String role}) async {
+  _routeTo({required String role})  {
     if (role != "") {
       if (role == Roles.maneger) {
         return Get.rootDelegate.offAndToNamed(Routes.MANEGER_HOME);

@@ -83,6 +83,7 @@ class TrainingDetaileAfterRecordingController extends GetxController {
         });
       }
 
+
       selectedFile.value = null;
       Get.snackbar('Success', 'File uploaded successfully');
     } else {

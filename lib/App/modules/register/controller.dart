@@ -74,7 +74,7 @@ class RegisterController extends GetxController {
       await repo.registerUser(email: email, password: password);
       isLoading = false;
       update();
-
+   
 
       showSnackBar(
           message: "We will send you an email soon",

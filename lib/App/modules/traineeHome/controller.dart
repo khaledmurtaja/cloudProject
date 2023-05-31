@@ -347,7 +347,7 @@ class TraineeHomeController extends GetxController {
         'dates': [selectedDate],
       }).then((_) async {
 
-      
+
 
         recommendedTrainings.clear();
         newTrainings.clear();
