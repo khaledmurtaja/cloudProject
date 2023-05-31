@@ -82,9 +82,6 @@ class TrainingDetaileAfterRecordingController extends GetxController {
           ]
         });
       }
-      await trackUserActivity(
-          activity: 'Delivery Assignments',
-          title: 'Assignments that have been delivered');
 
       selectedFile.value = null;
       Get.snackbar('Success', 'File uploaded successfully');

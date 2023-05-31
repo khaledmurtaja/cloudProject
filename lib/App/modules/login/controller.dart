@@ -41,7 +41,6 @@ class LoginController extends GetxController {
       if (role == Roles.maneger) {
         return Get.rootDelegate.offAndToNamed(Routes.MANEGER_HOME);
       } else if (role == Roles.trainee) {
-        await trackUserActivity(activity: 'Login', title: 'Login by trainee');
         return Get.rootDelegate.offAndToNamed(Routes.TRAINEE_HOME);
       } else {
         return Get.rootDelegate.offAndToNamed(Routes.ADVISOR_HOME);

@@ -346,9 +346,8 @@ class TraineeHomeController extends GetxController {
           .set({
         'dates': [selectedDate],
       }).then((_) async {
-        await trackUserActivity(
-            activity: 'Training recording',
-            title: 'Training recording by the trainee');
+
+      
 
         recommendedTrainings.clear();
         newTrainings.clear();

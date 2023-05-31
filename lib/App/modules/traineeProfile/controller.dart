@@ -76,8 +76,7 @@ class TraineeProfileController extends GetxController {
             .update({'balance': newBalance.toString()});
 
         balance.value = newBalance.toString();
-        await trackUserActivity(
-            activity: 'Add credit', title: 'The apprentice added credit');
+
 
         balanceController.clear();
         Get.snackbar(
