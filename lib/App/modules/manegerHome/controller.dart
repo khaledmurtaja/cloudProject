@@ -12,6 +12,7 @@ import 'package:getx_architecture/core/values/enums.dart';
 import 'package:getx_architecture/core/values/roles.dart';
 import 'package:getx_architecture/routes/routes.dart';
 import '../../data/models/attendanceDate.dart';
+import 'package:getx_architecture/App/data/models/trainings.dart';
 import '../../data/models/user.dart';
 import '../../data/services/sharedPrefService.dart';
 import 'advisorsPage.dart';
@@ -60,6 +61,8 @@ class ManagerHomeController extends GetxController {
   bool addingTrainingLoading = false;
   bool addingBannerLoading = false;
   bool updatingBannerLoading=false;
+  bool gettingCoursesLoading=false;
+  bool getTraineesLoading=false;
   bool isFetchingUsersWithEmptyIdLoading = false;
   bool isVerifying = false;
   String selectedUId = "";
@@ -95,6 +98,8 @@ class ManagerHomeController extends GetxController {
     'Thursday',
     'Sunday'
   ];
+  List<Training> trainings=[];
+  List<SystemUser> trainees=[];
 
   TextEditingController courseName = TextEditingController();
   TextEditingController courseDescription = TextEditingController();
@@ -103,7 +108,7 @@ class ManagerHomeController extends GetxController {
     StatisticsPage(),
     CoursesPage(),
     RequestsPage(),
-    TraineePage(),
+    TraineesPage(),
     AdvisorPage(),
     BannerPage()
   ];
@@ -119,6 +124,8 @@ class ManagerHomeController extends GetxController {
       await setCoursesCount();
       await fetchUsersWithEmptyId();
       await getBanners();
+      await fetchTrainings();
+      await fetchTrainees();
       await getUsers(category: "FrontEnd", role: Roles.advisor);
       update();
     } catch (error) {
@@ -224,7 +231,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
-    isBannerSelected = true;
+    isBannerSelected = false;
     currentPageIndex = 0;
     update();
   }
@@ -235,7 +242,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
-    isBannerSelected = true;
+    isBannerSelected = false;
     currentPageIndex = 1;
     update();
   }
@@ -246,7 +253,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = true;
     isTraineesSelected = false;
     isAdvisorsSelected = false;
-    isBannerSelected = true;
+    isBannerSelected = false;
     currentPageIndex = 2;
     update();
   }
@@ -257,7 +264,7 @@ class ManagerHomeController extends GetxController {
     isRequestsSelected = false;
     isTraineesSelected = true;
     isAdvisorsSelected = false;
-    isBannerSelected = true;
+    isBannerSelected = false;
     currentPageIndex = 3;
     update();
   }
@@ -501,6 +508,37 @@ class ManagerHomeController extends GetxController {
       showSnackBar(message: "something went wrong");
     }
   }
+  fetchTrainings() async {
+    //getTraineesLoading
+    try {
+      gettingCoursesLoading = true;
+      update();
+      final repo = Get.find<ManagerHomeRepository>();
+      await repo.fetchTrainings();
+      gettingCoursesLoading = false;
+    }catch(e){
+      gettingCoursesLoading=false;
+      update();
+      showSnackBar(message: "something went wrong");
+    }
+
+  }
+  fetchTrainees() async {
+    //
+    try {
+      getTraineesLoading = true;
+      update();
+      final repo = Get.find<ManagerHomeRepository>();
+      await repo.fetchTrainees();
+      getTraineesLoading = false;
+    }catch(e){
+      getTraineesLoading=false;
+      update();
+      showSnackBar(message: "something went wrong");
+    }
+
+  }
+
   logout(){
     final sharedPref = Get.find<AppSharedPref>();
     sharedPref.deleteValue(key: "Uid");

@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:getx_architecture/App/data/models/trainings.dart';
 import 'package:getx_architecture/App/modules/manegerHome/controller.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/errors/exceptions.dart';
 import '../../../core/values/email_service_consts.dart';
 import '../../../core/values/roles.dart';
 import '../../data/models/ad.dart';
-import '../../data/models/trainings.dart';
 import '../../data/models/user.dart';
 import 'package:image/image.dart' as img;
 
@@ -95,10 +95,8 @@ class ManagerHomeRepository {
 
   Future<int> getCoursesCount() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('trainings')
-          .get();
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('trainings').get();
       coursesNumber = snapshot.size;
       return coursesNumber;
     } catch (exception) {
@@ -108,8 +106,11 @@ class ManagerHomeRepository {
 
   Future<int> getRequestsCount() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('users').where('id',isEqualTo: "").get();
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .where('id', isEqualTo: "")
+          .get();
       for (var doc in snapshot.docs) {
         Map<String, dynamic>? data = doc.data();
         requestsNumber++;
@@ -138,14 +139,14 @@ class ManagerHomeRepository {
       return [];
     }
   }
-  Future<List<Ad>> getBanners(
-      ) async {
+
+  Future<List<Ad>> getBanners() async {
     try {
-      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('ads')
-          .get();
+      final QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('ads').get();
       final List<Ad> ads = querySnapshot.docs
-          .map((doc) => Ad(imageUrl: doc['imageUrl'], name: doc['name'],id: doc['id']))
+          .map((doc) =>
+              Ad(imageUrl: doc['imageUrl'], name: doc['name'], id: doc['id']))
           .toList();
       return ads;
     } catch (e) {
@@ -160,10 +161,13 @@ class ManagerHomeRepository {
     controller.imgUrl = await _uploadCourseImage(bytes: bytes);
     CollectionReference trainings =
         FirebaseFirestore.instance.collection('trainings');
+    String id = trainings.doc().id;
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
     trainings
         .add(Training(
                 trainingName: controller.courseName.text,
-                trainingId: trainings.doc().id,
+                trainingId: id,
                 category: controller.courseCategory,
                 description: controller.courseDescription.text,
                 dates: controller.attendanceDates,
@@ -173,29 +177,44 @@ class ManagerHomeRepository {
                 price: controller.coursePrice.text,
                 isPaidCourse: controller.isPaidCourse)
             .toJson())
-        .then((value) {})
-        .catchError((error) {});
+        .then((value) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .where("id", isEqualTo: controller.advisorId)
+          .get()
+          .then((value) {
+        DocumentSnapshot userSnapshot = value.docs.first;
+        String userId = userSnapshot.id;
+        print(userId);
+        usersCollection.doc(userId).update({
+          'selected_training_ids': FieldValue.arrayUnion([id])
+        }).then((value) {
+          print('Training ID added successfully');
+        }).catchError((error) {
+          print('Failed to add training ID: $error');
+        });
+      });
+    });
   }
+
   storeBannerData() async {
     final controller = Get.find<ManagerHomeController>();
     final bytes = controller.bannerFilePickerResult!.files.first.bytes;
     controller.bannerImageUrl = await _uploadCourseImage(bytes: bytes);
-    CollectionReference ads =
-    FirebaseFirestore.instance.collection('ads');
-    String id=ads.doc().id;
-    ads
-        .add(
-      {
-        'name':controller.bannerName.text,
-        'imageUrl':controller.bannerImageUrl,
-        'id':id
-      }
-        )
-        .then((value) {
-          controller.banners.add(Ad(id:id,imageUrl: controller.bannerImageUrl, name: controller.bannerName.text));
-    })
-        .catchError((error) {});
+    CollectionReference ads = FirebaseFirestore.instance.collection('ads');
+    String id = ads.doc().id;
+    ads.add({
+      'name': controller.bannerName.text,
+      'imageUrl': controller.bannerImageUrl,
+      'id': id
+    }).then((value) {
+      controller.banners.add(Ad(
+          id: id,
+          imageUrl: controller.bannerImageUrl,
+          name: controller.bannerName.text));
+    }).catchError((error) {});
   }
+
   updateBannerData({required int index}) async {
     final controller = Get.find<ManagerHomeController>();
     final bytes = controller.bannerFilePickerResult!.files.first.bytes;
@@ -203,7 +222,8 @@ class ManagerHomeRepository {
     CollectionReference ads = FirebaseFirestore.instance.collection('ads');
 
     // Assuming the field to match is "id" and the desired value is 123
-    QuerySnapshot querySnapshot = await ads.where('id', isEqualTo: controller.banners[index].id).get();
+    QuerySnapshot querySnapshot =
+        await ads.where('id', isEqualTo: controller.banners[index].id).get();
 
     if (querySnapshot.size > 0) {
       String documentId = querySnapshot.docs.first.id;
@@ -219,6 +239,37 @@ class ManagerHomeRepository {
     }
   }
 
+  Future<void> fetchTrainings() async {
+    final controller = Get.find<ManagerHomeController>();
+
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('trainings').get();
+
+      controller.trainings = snapshot.docs
+          .map((doc) => Training.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching trainings: $e');
+    }
+  }
+
+  Future<void> fetchTrainees() async {
+    final controller = Get.find<ManagerHomeController>();
+
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: Roles.trainee)
+          .get();
+
+      controller.trainees = snapshot.docs
+          .map((doc) => SystemUser.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching trainings: $e');
+    }
+  }
 
   _uploadCourseImage({dynamic bytes}) async {
     try {
