@@ -1,17 +1,17 @@
 class ImagePaths{
   static const String loginScreenImage="assets/images/loginScreenPhoto.png";
-  static const String statisticsIcon="images/statistics.svg";
-  static const String coursesIcon="images/courses.svg";
-  static const String requestsIcon="images/requests.svg";
-  static const String traineesIcon="images/trainees.svg";
-  static const String advisorIcon="images/advisors.svg";
-  static const String bannerIcon="images/banner.svg";
-  static const String arrow="images/arrow.svg";
-  static const String blackCourseIcon="images/coursesBlack.svg";
-  static const String courseNameIcon="images/courseNameIcon.svg";
-  static const String advisorGreyIcon="images/advisorGrey.svg";
-  static const String categoryGreyIcon="images/bookGrey.svg";
-  static const String blackRequestsIcon="images/requestBlack.svg";
+  static const String statisticsIcon="assets/images/statistics.svg";
+  static const String coursesIcon="assets/images/courses.svg";
+  static const String requestsIcon="assets/images/requests.svg";
+  static const String traineesIcon="assets/images/trainees.svg";
+  static const String advisorIcon="assets/images/advisors.svg";
+  static const String bannerIcon="assets/images/banner.svg";
+  static const String arrow="assets/images/arrow.svg";
+  static const String blackCourseIcon="assets/images/coursesBlack.svg";
+  static const String courseNameIcon="assets/images/courseNameIcon.svg";
+  static const String advisorGreyIcon="assets/images/advisorGrey.svg";
+  static const String categoryGreyIcon="assets/images/bookGrey.svg";
+  static const String blackRequestsIcon="assets/images/requestBlack.svg";
   static const String logoutIcon="assets/images/logoutcurve.svg";
 
 
